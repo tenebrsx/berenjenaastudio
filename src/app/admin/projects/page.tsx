@@ -95,8 +95,8 @@ export default function ProjectsPage() {
                 <div className="mb-8">
                     <div className="flex items-center justify-between mb-6">
                         <div>
-                            <h1 className="text-3xl font-semibold tracking-tight text-zinc-900">Proyectos</h1>
-                            <p className="text-zinc-600 mt-1">
+                            <h1 className="text-3xl font-semibold tracking-tight text-white">Proyectos</h1>
+                            <p className="text-zinc-400 mt-1">
                                 {filteredProjects.length} {filteredProjects.length === 1 ? 'proyecto' : 'proyectos'}
                                 {categoryFilter !== "all" && ` en ${categoryFilter}`}
                             </p>
@@ -113,7 +113,7 @@ export default function ProjectsPage() {
                     <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
                         {/* Search */}
                         <div className="relative flex-1 max-w-md">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
                             <Input
                                 placeholder="Buscar proyectos..."
                                 value={searchQuery}
@@ -127,7 +127,7 @@ export default function ProjectsPage() {
                             <select
                                 value={categoryFilter}
                                 onChange={(e) => setCategoryFilter(e.target.value)}
-                                className="h-10 rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900 focus-visible:ring-offset-2"
+                                className="h-10 rounded-md border border-zinc-700 bg-zinc-900 text-white px-3 py-2 text-sm ring-offset-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF8562] focus-visible:ring-offset-2"
                             >
                                 {categories.map(cat => (
                                     <option key={cat} value={cat}>
@@ -137,12 +137,12 @@ export default function ProjectsPage() {
                             </select>
 
                             {/* View Toggle */}
-                            <div className="flex items-center gap-1 border border-zinc-300 rounded-md p-1">
+                            <div className="flex items-center gap-1 border border-zinc-700 rounded-md p-1 bg-zinc-900">
                                 <button
                                     onClick={() => setViewMode("grid")}
                                     className={cn(
-                                        "p-2 rounded hover:bg-zinc-100 transition-colors",
-                                        viewMode === "grid" && "bg-zinc-900 text-white hover:bg-zinc-800"
+                                        "p-2 rounded hover:bg-zinc-800 transition-colors",
+                                        viewMode === "grid" && "bg-[#FF8562] text-white hover:bg-[#ff9575]"
                                     )}
                                     title="Vista de cuadrícula"
                                 >
@@ -151,8 +151,8 @@ export default function ProjectsPage() {
                                 <button
                                     onClick={() => setViewMode("list")}
                                     className={cn(
-                                        "p-2 rounded hover:bg-zinc-100 transition-colors",
-                                        viewMode === "list" && "bg-zinc-900 text-white hover:bg-zinc-800"
+                                        "p-2 rounded hover:bg-zinc-800 transition-colors",
+                                        viewMode === "list" && "bg-[#FF8562] text-white hover:bg-[#ff9575]"
                                     )}
                                     title="Vista de lista"
                                 >
@@ -171,9 +171,9 @@ export default function ProjectsPage() {
                     )}>
                         {[...Array(6)].map((_, i) => (
                             <Card key={i} className="overflow-hidden">
-                                <div className="aspect-video bg-zinc-200 animate-pulse" />
+                                <div className="aspect-video bg-zinc-800 animate-pulse" />
                                 <CardHeader>
-                                    <div className="h-4 bg-zinc-200 rounded animate-pulse" />
+                                    <div className="h-4 bg-zinc-800 rounded animate-pulse" />
                                 </CardHeader>
                             </Card>
                         ))}
@@ -181,13 +181,13 @@ export default function ProjectsPage() {
                 ) : filteredProjects.length === 0 ? (
                     <Card className="p-12">
                         <div className="text-center">
-                            <Film className="mx-auto h-12 w-12 text-zinc-400 mb-4" />
-                            <h3 className="text-lg font-medium text-zinc-900 mb-2">
+                            <Film className="mx-auto h-12 w-12 text-zinc-600 mb-4" />
+                            <h3 className="text-lg font-medium text-white mb-2">
                                 {searchQuery || categoryFilter !== "all"
                                     ? "No se encontraron proyectos"
                                     : "Aún no hay proyectos"}
                             </h3>
-                            <p className="text-zinc-600 mb-6">
+                            <p className="text-zinc-400 mb-6">
                                 {searchQuery || categoryFilter !== "all"
                                     ? "Intenta ajustar tu búsqueda o filtros"
                                     : "Comienza creando tu primer proyecto"}
@@ -208,7 +208,7 @@ export default function ProjectsPage() {
                         {filteredProjects.map((project) => (
                             <Card key={project.id} className="overflow-hidden group hover:shadow-lg transition-shadow">
                                 {/* Thumbnail */}
-                                <div className="aspect-video bg-zinc-100 overflow-hidden relative">
+                                <div className="aspect-video bg-zinc-800 overflow-hidden relative">
                                     <img
                                         src={project.thumbnail}
                                         alt={project.title}
@@ -222,9 +222,9 @@ export default function ProjectsPage() {
                                         <CardTitle className="text-lg truncate">{project.title}</CardTitle>
                                     </div>
 
-                                    <div className="flex items-center gap-2 text-xs text-zinc-500">
+                                    <div className="flex items-center gap-2 text-xs text-zinc-400">
                                         <Tag className="h-3 w-3" />
-                                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-zinc-100 text-zinc-700">
+                                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-[#FF8562] text-white">
                                             {project.category}
                                         </span>
                                     </div>
@@ -238,7 +238,7 @@ export default function ProjectsPage() {
 
                                 {/* Actions */}
                                 <CardContent className="pt-0 flex gap-2">
-                                    <Link href={`/work/${project.slug}`} target="_blank" className="flex-1">
+                                    <Link href={`/project?slug=${project.slug}`} target="_blank" className="flex-1">
                                         <Button variant="outline" size="sm" className="w-full text-xs">
                                             Ver
                                         </Button>
@@ -269,7 +269,7 @@ export default function ProjectsPage() {
                                 <CardContent className="p-4">
                                     <div className="flex items-center gap-4">
                                         {/* Thumbnail */}
-                                        <div className="w-32 h-20 bg-zinc-100 rounded overflow-hidden flex-shrink-0">
+                                        <div className="w-32 h-20 bg-zinc-800 rounded overflow-hidden flex-shrink-0">
                                             <img
                                                 src={project.thumbnail}
                                                 alt={project.title}
@@ -281,17 +281,17 @@ export default function ProjectsPage() {
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-start justify-between gap-4">
                                                 <div className="flex-1 min-w-0">
-                                                    <h3 className="font-semibold text-zinc-900 truncate">{project.title}</h3>
+                                                    <h3 className="font-semibold text-white truncate">{project.title}</h3>
                                                     <div className="flex items-center gap-3 mt-1">
-                                                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-zinc-100 text-zinc-700">
+                                                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-[#FF8562] text-white">
                                                             {project.category}
                                                         </span>
-                                                        <span className="text-xs text-zinc-500">
+                                                        <span className="text-xs text-zinc-400">
                                                             {project.slug}
                                                         </span>
                                                     </div>
                                                     {project.description && (
-                                                        <p className="text-sm text-zinc-600 mt-2 line-clamp-1">
+                                                        <p className="text-sm text-zinc-300 mt-2 line-clamp-1">
                                                             {project.description}
                                                         </p>
                                                     )}
@@ -299,7 +299,7 @@ export default function ProjectsPage() {
 
                                                 {/* Actions */}
                                                 <div className="flex items-center gap-2 flex-shrink-0">
-                                                    <Link href={`/work/${project.slug}`} target="_blank">
+                                                    <Link href={`/project?slug=${project.slug}`} target="_blank">
                                                         <Button variant="outline" size="sm" className="text-xs">
                                                             Ver
                                                         </Button>

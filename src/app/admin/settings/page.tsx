@@ -61,12 +61,12 @@ export default function SettingsPage() {
         <ProtectedRoute>
             <AdminLayout>
                 <div className="mb-8">
-                    <Link href="/admin" className="inline-flex items-center gap-2 text-sm text-zinc-600 hover:text-zinc-900 mb-4">
+                    <Link href="/admin" className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-[#FF8562] mb-4">
                         <ArrowLeft className="h-4 w-4" />
                         Volver al Panel
                     </Link>
-                    <h1 className="text-3xl font-semibold tracking-tight text-zinc-900">Configuración</h1>
-                    <p className="text-zinc-600 mt-1">Configura los ajustes de tu sitio</p>
+                    <h1 className="text-3xl font-semibold tracking-tight text-white">Configuración</h1>
+                    <p className="text-zinc-400 mt-1">Configura los ajustes de tu sitio</p>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -88,7 +88,7 @@ export default function SettingsPage() {
                                             placeholder="https://videos.pexels.com/..."
                                             className="text-base"
                                         />
-                                        <p className="text-xs text-zinc-500">Pega un enlace directo al video</p>
+                                        <p className="text-xs text-zinc-400">Pega un enlace directo al video</p>
                                     </div>
 
                                     <div className="flex gap-3 pt-4">
@@ -115,7 +115,7 @@ export default function SettingsPage() {
                                 <CardDescription>Cómo aparecerá en la página de inicio</CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <div className="aspect-video bg-zinc-100 rounded-lg overflow-hidden">
+                                <div className="aspect-video bg-zinc-800 rounded-lg overflow-hidden">
                                     {videoPreview ? (
                                         <video
                                             src={videoPreview}
@@ -126,7 +126,7 @@ export default function SettingsPage() {
                                             className="w-full h-full object-cover"
                                         />
                                     ) : (
-                                        <div className="w-full h-full flex items-center justify-center text-zinc-400 text-sm">
+                                        <div className="w-full h-full flex items-center justify-center text-zinc-500 text-sm">
                                             Vista previa del video
                                         </div>
                                     )}

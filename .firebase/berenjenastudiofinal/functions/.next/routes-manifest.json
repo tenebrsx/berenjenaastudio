@@ -33,14 +33,6 @@
   },
   "dynamicRoutes": [
     {
-      "page": "/admin/edit/[id]",
-      "regex": "^/admin/edit/([^/]+?)(?:/)?$",
-      "routeKeys": {
-        "nxtPid": "nxtPid"
-      },
-      "namedRegex": "^/admin/edit/(?<nxtPid>[^/]+?)(?:/)?$"
-    },
-    {
       "page": "/work/[slug]",
       "regex": "^/work/([^/]+?)(?:/)?$",
       "routeKeys": {
@@ -89,6 +81,12 @@
       "namedRegex": "^/admin(?:/)?$"
     },
     {
+      "page": "/admin/edit",
+      "regex": "^/admin/edit(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/edit(?:/)?$"
+    },
+    {
       "page": "/admin/login",
       "regex": "^/admin/login(?:/)?$",
       "routeKeys": {},
@@ -99,6 +97,18 @@
       "regex": "^/admin/new(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/admin/new(?:/)?$"
+    },
+    {
+      "page": "/admin/projects",
+      "regex": "^/admin/projects(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/projects(?:/)?$"
+    },
+    {
+      "page": "/admin/settings",
+      "regex": "^/admin/settings(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/settings(?:/)?$"
     },
     {
       "page": "/favicon.ico",

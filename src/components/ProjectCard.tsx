@@ -25,7 +25,7 @@ export default function ProjectCard({ project, layoutId, className }: ProjectCar
             onMouseEnter={() => setCursor("text", "VER")}
             onMouseLeave={() => setCursor("default")}
         >
-            <Link href={`/work/${project.slug}`} className="block w-full">
+            <Link href={`/project?slug=${project.slug}`} className="block w-full">
                 {/* Aspect Ratio Container */}
                 <div className="relative w-full aspect-video overflow-hidden bg-gray-900">
                     {/* Thumbnail Image */}

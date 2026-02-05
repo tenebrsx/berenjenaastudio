@@ -74,8 +74,8 @@ export default function AdminDashboard() {
                 <div className="mb-8">
                     <div className="flex items-center justify-between">
                         <div>
-                            <h1 className="text-3xl font-semibold tracking-tight text-zinc-900">Panel de Control</h1>
-                            <p className="text-zinc-600 mt-1">Gestiona tus proyectos de portafolio</p>
+                            <h1 className="text-3xl font-semibold tracking-tight text-white">Panel de Control</h1>
+                            <p className="text-zinc-400 mt-1">Gestiona tus proyectos de portafolio</p>
                         </div>
                         <Link href="/admin/new">
                             <Button size="lg" className="gap-2">
@@ -107,16 +107,16 @@ export default function AdminDashboard() {
 
                 {/* Projects Grid */}
                 <div className="mb-6 flex items-center justify-between">
-                    <h2 className="text-xl font-semibold text-zinc-900">Todos los Proyectos</h2>
+                    <h2 className="text-xl font-semibold text-white">Todos los Proyectos</h2>
                 </div>
 
                 {loading ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {[...Array(6)].map((_, i) => (
                             <Card key={i} className="overflow-hidden">
-                                <div className="aspect-video bg-zinc-200 animate-pulse" />
+                                <div className="aspect-video bg-zinc-800 animate-pulse" />
                                 <CardHeader>
-                                    <div className="h-4 bg-zinc-200 rounded animate-pulse" />
+                                    <div className="h-4 bg-zinc-800 rounded animate-pulse" />
                                 </CardHeader>
                             </Card>
                         ))}
@@ -124,9 +124,9 @@ export default function AdminDashboard() {
                 ) : projects.length === 0 ? (
                     <Card className="p-12">
                         <div className="text-center">
-                            <Film className="mx-auto h-12 w-12 text-zinc-400 mb-4" />
-                            <h3 className="text-lg font-medium text-zinc-900 mb-2">Aún no hay proyectos</h3>
-                            <p className="text-zinc-600 mb-6">Comienza creando tu primer proyecto</p>
+                            <Film className="mx-auto h-12 w-12 text-zinc-600 mb-4" />
+                            <h3 className="text-lg font-medium text-white mb-2">Aún no hay proyectos</h3>
+                            <p className="text-zinc-400 mb-6">Comienza creando tu primer proyecto</p>
                             <Link href="/admin/new">
                                 <Button className="gap-2">
                                     <Plus className="h-4 w-4" />
@@ -140,7 +140,7 @@ export default function AdminDashboard() {
                         {projects.map((project) => (
                             <Card key={project.id} className="overflow-hidden group hover:shadow-lg transition-shadow">
                                 {/* Thumbnail */}
-                                <div className="aspect-video bg-zinc-100 overflow-hidden">
+                                <div className="aspect-video bg-zinc-800 overflow-hidden">
                                     <img
                                         src={project.thumbnail}
                                         alt={project.title}
@@ -154,7 +154,7 @@ export default function AdminDashboard() {
                                         <div className="flex-1 min-w-0">
                                             <CardTitle className="text-lg truncate">{project.title}</CardTitle>
                                             <CardDescription className="mt-1">
-                                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-zinc-100 text-zinc-700">
+                                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-[#FF8562] text-white">
                                                     {project.category}
                                                 </span>
                                             </CardDescription>

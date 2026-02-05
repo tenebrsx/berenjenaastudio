@@ -1,9 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "export",
+  output: "export", // Re-enabled static export for Firebase Hosting
   images: {
-    unoptimized: true, // Required for static export
+    unoptimized: true, // May be needed for Firebase hosting
   },
 
   async headers() {

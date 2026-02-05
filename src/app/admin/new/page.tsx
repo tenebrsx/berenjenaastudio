@@ -20,9 +20,13 @@ export default function NewProjectPage() {
         title: "",
         slug: "",
         description: "",
-        category: "Commercial",
+        category: "",
         thumbnail: "",
+        videoUrl: "",
     });
+
+    // Suggested categories (user can still type their own)
+    const suggestedCategories = ["Commercial", "Music Video", "Narrative", "Spec"];
     const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -70,12 +74,12 @@ export default function NewProjectPage() {
             <AdminLayout>
                 {/* Header */}
                 <div className="mb-8">
-                    <Link href="/admin" className="inline-flex items-center gap-2 text-sm text-zinc-600 hover:text-zinc-900 mb-4">
+                    <Link href="/admin" className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-[#FF8562] mb-4">
                         <ArrowLeft className="h-4 w-4" />
                         Volver al Panel
                     </Link>
-                    <h1 className="text-3xl font-semibold tracking-tight text-zinc-900">Nuevo Proyecto</h1>
-                    <p className="text-zinc-600 mt-1">Crear una nueva pieza de portafolio</p>
+                    <h1 className="text-3xl font-semibold tracking-tight text-white">Nuevo Proyecto</h1>
+                    <p className="text-zinc-400 mt-1">Crear una nueva pieza de portafolio</p>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -114,27 +118,30 @@ export default function NewProjectPage() {
                                                 className="text-base pr-8"
                                             />
                                             {formData.slug && (
-                                                <Check className="absolute right-3 top-3 h-4 w-4 text-green-600" />
+                                                <Check className="absolute right-3 top-3 h-4 w-4 text-[#FF8562]" />
                                             )}
                                         </div>
-                                        <p className="text-xs text-zinc-500">Generado automáticamente del título</p>
+                                        <p className="text-xs text-zinc-400">Generado automáticamente del título</p>
                                     </div>
 
                                     <div className="space-y-2">
                                         <Label htmlFor="category">Categoría *</Label>
-                                        <select
+                                        <Input
                                             id="category"
                                             name="category"
                                             value={formData.category}
                                             onChange={handleChange}
                                             required
-                                            className="flex h-10 w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900 focus-visible:ring-offset-2"
-                                        >
-                                            <option value="Commercial">Commercial</option>
-                                            <option value="Music Video">Music Video</option>
-                                            <option value="Narrative">Narrative</option>
-                                            <option value="Spec">Spec</option>
-                                        </select>
+                                            placeholder="Escribe o selecciona una categoría"
+                                            list="category-suggestions"
+                                            className="text-base"
+                                        />
+                                        <datalist id="category-suggestions">
+                                            {suggestedCategories.map(cat => (
+                                                <option key={cat} value={cat} />
+                                            ))}
+                                        </datalist>
+                                        <p className="text-xs text-zinc-400">Puedes escribir tu propia categoría o seleccionar una sugerida</p>
                                     </div>
 
                                     <div className="space-y-2">
@@ -149,7 +156,21 @@ export default function NewProjectPage() {
                                             placeholder="https://images.unsplash.com/..."
                                             className="text-base"
                                         />
-                                        <p className="text-xs text-zinc-500">La vista previa aparecerá a la derecha</p>
+                                        <p className="text-xs text-zinc-400">La vista previa aparecerá a la derecha</p>
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <Label htmlFor="videoUrl">URL de YouTube (Opcional)</Label>
+                                        <Input
+                                            id="videoUrl"
+                                            name="videoUrl"
+                                            type="url"
+                                            value={formData.videoUrl}
+                                            onChange={handleChange}
+                                            placeholder="https://youtube.com/watch?v=..."
+                                            className="text-base"
+                                        />
+                                        <p className="text-xs text-zinc-400">Agrega un enlace de YouTube si el proyecto tiene video</p>
                                     </div>
 
                                     <div className="space-y-2">
@@ -191,8 +212,8 @@ export default function NewProjectPage() {
                             <CardContent>
                                 <div className="space-y-4">
                                     {/* Card Preview */}
-                                    <div className="border border-zinc-200 rounded-lg overflow-hidden bg-white shadow-sm">
-                                        <div className="aspect-video bg-zinc-100">
+                                    <div className="border border-zinc-700 rounded-lg overflow-hidden bg-zinc-800 shadow-sm">
+                                        <div className="aspect-video bg-zinc-900">
                                             {thumbnailPreview ? (
                                                 <img
                                                     src={thumbnailPreview}
@@ -201,22 +222,22 @@ export default function NewProjectPage() {
                                                     onError={() => setThumbnailPreview("")}
                                                 />
                                             ) : (
-                                                <div className="w-full h-full flex items-center justify-center text-zinc-400 text-sm">
+                                                <div className="w-full h-full flex items-center justify-center text-zinc-500 text-sm">
                                                     Vista previa de miniatura
                                                 </div>
                                             )}
                                         </div>
                                         <div className="p-4">
-                                            <h3 className="font-semibold text-lg truncate">
+                                            <h3 className="font-semibold text-lg truncate text-white">
                                                 {formData.title || "Título del Proyecto"}
                                             </h3>
-                                            <p className="text-sm text-zinc-600 mt-1">
-                                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-zinc-100">
+                                            <p className="text-sm text-zinc-400 mt-1">
+                                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-[#FF8562] text-white">
                                                     {formData.category}
                                                 </span>
                                             </p>
                                             {formData.description && (
-                                                <p className="text-sm text-zinc-600 mt-3 line-clamp-2">
+                                                <p className="text-sm text-zinc-300 mt-3 line-clamp-2">
                                                     {formData.description}
                                                 </p>
                                             )}
@@ -225,10 +246,10 @@ export default function NewProjectPage() {
 
                                     {/* URL Preview */}
                                     {formData.slug && (
-                                        <div className="p-4 bg-zinc-50 rounded-lg border border-zinc-200">
-                                            <p className="text-xs text-zinc-500 mb-1">URL Pública</p>
-                                            <code className="text-sm text-zinc-900 break-all">
-                                                /work/{formData.slug}
+                                        <div className="p-4 bg-zinc-800 rounded-lg border border-zinc-700">
+                                            <p className="text-xs text-zinc-400 mb-1">URL Pública</p>
+                                            <code className="text-sm text-white break-all">
+                                                /project?slug={formData.slug}
                                             </code>
                                         </div>
                                     )}

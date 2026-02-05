@@ -11,7 +11,9 @@
                 "source": "/api/**",
                 "function": "api"
             }
-        ]
+        ],
+        "cleanUrls": true,
+        "trailingSlash": false
     },
     "functions": {
         "source": "functions",

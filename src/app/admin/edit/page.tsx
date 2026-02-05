@@ -19,6 +19,7 @@ interface Project {
     category: string;
     thumbnail: string;
     description?: string;
+    videoUrl?: string;
 }
 
 function EditContent() {
@@ -30,8 +31,12 @@ function EditContent() {
     const [formData, setFormData] = useState({
         title: "",
         description: "",
-        category: "Commercial",
+        category: "",
+        videoUrl: "",
     });
+
+    // Suggested categories (user can still type their own)
+    const suggestedCategories = ["Commercial", "Music Video", "Narrative", "Spec"];
 
     useEffect(() => {
         if (projectId) {
@@ -51,6 +56,7 @@ function EditContent() {
                     title: found.title,
                     description: found.description || "",
                     category: found.category,
+                    videoUrl: found.videoUrl || "",
                 });
             }
         } catch (error) {
@@ -91,8 +97,8 @@ function EditContent() {
 
     if (!project) {
         return (
-            <div className="min-h-screen bg-zinc-50 flex items-center justify-center">
-                <Loader2 className="h-8 w-8 animate-spin text-zinc-400" />
+            <div className="min-h-screen bg-black flex items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-zinc-500" />
             </div>
         );
     }
@@ -101,12 +107,12 @@ function EditContent() {
         <ProtectedRoute>
             <AdminLayout>
                 <div className="mb-8">
-                    <Link href="/admin" className="inline-flex items-center gap-2 text-sm text-zinc-600 hover:text-zinc-900 mb-4">
+                    <Link href="/admin" className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-[#FF8562] mb-4">
                         <ArrowLeft className="h-4 w-4" />
                         Volver al Panel
                     </Link>
-                    <h1 className="text-3xl font-semibold tracking-tight text-zinc-900">Editar Proyecto</h1>
-                    <p className="text-zinc-600 mt-1">{project.title}</p>
+                    <h1 className="text-3xl font-semibold tracking-tight text-white">Editar Proyecto</h1>
+                    <p className="text-zinc-400 mt-1">{project.title}</p>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -138,24 +144,41 @@ function EditContent() {
                                             disabled
                                             className="text-base bg-zinc-50"
                                         />
-                                        <p className="text-xs text-zinc-500">No se puede cambiar</p>
+                                        <p className="text-xs text-zinc-400">No se puede cambiar</p>
                                     </div>
 
                                     <div className="space-y-2">
                                         <Label htmlFor="category">Categoría *</Label>
-                                        <select
+                                        <Input
                                             id="category"
                                             name="category"
                                             value={formData.category}
                                             onChange={handleChange}
                                             required
-                                            className="flex h-10 w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900 focus-visible:ring-offset-2"
-                                        >
-                                            <option value="Commercial">Commercial</option>
-                                            <option value="Music Video">Music Video</option>
-                                            <option value="Narrative">Narrative</option>
-                                            <option value="Spec">Spec</option>
-                                        </select>
+                                            placeholder="Escribe o selecciona una categoría"
+                                            list="category-suggestions-edit"
+                                            className="text-base"
+                                        />
+                                        <datalist id="category-suggestions-edit">
+                                            {suggestedCategories.map(cat => (
+                                                <option key={cat} value={cat} />
+                                            ))}
+                                        </datalist>
+                                        <p className="text-xs text-zinc-400">Puedes escribir tu propia categoría o seleccionar una sugerida</p>
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <Label htmlFor="videoUrl">URL de YouTube (Opcional)</Label>
+                                        <Input
+                                            id="videoUrl"
+                                            name="videoUrl"
+                                            type="url"
+                                            value={formData.videoUrl}
+                                            onChange={handleChange}
+                                            placeholder="https://youtube.com/watch?v=..."
+                                            className="text-base"
+                                        />
+                                        <p className="text-xs text-zinc-400">Agrega un enlace de YouTube si el proyecto tiene video</p>
                                     </div>
 
                                     <div className="space-y-2">
@@ -194,17 +217,17 @@ function EditContent() {
                                 <CardDescription>Cómo aparece actualmente</CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <div className="border border-zinc-200 rounded-lg overflow-hidden">
-                                    <div className="aspect-video bg-zinc-100">
+                                <div className="border border-zinc-700 rounded-lg overflow-hidden">
+                                    <div className="aspect-video bg-zinc-800">
                                         <img
                                             src={project.thumbnail}
                                             alt={project.title}
                                             className="w-full h-full object-cover"
                                         />
                                     </div>
-                                    <div className="p-4 bg-zinc-50">
-                                        <p className="text-xs text-zinc-500 mb-1">Miniatura actual</p>
-                                        <code className="text-xs text-zinc-700 break-all">
+                                    <div className="p-4 bg-zinc-800">
+                                        <p className="text-xs text-zinc-400 mb-1">Miniatura actual</p>
+                                        <code className="text-xs text-zinc-300 break-all">
                                             {project.thumbnail}
                                         </code>
                                     </div>
@@ -221,8 +244,8 @@ function EditContent() {
 export default function EditProjectPage() {
     return (
         <Suspense fallback={
-            <div className="min-h-screen bg-zinc-50 flex items-center justify-center">
-                <Loader2 className="h-8 w-8 animate-spin text-zinc-400" />
+            <div className="min-h-screen bg-black flex items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-zinc-500" />
             </div>
         }>
             <EditContent />
