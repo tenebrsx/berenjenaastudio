@@ -1,0 +1,3 @@
+module.exports=[18002,a=>a.a(async(b,c)=>{try{var d=a.i(96484),e=b([d]);[d]=e.then?(await e)():e,a.s([]),c()}catch(a){c(a)}},!1),71229,a=>a.a(async(b,c)=>{try{var d=a.i(18002),e=a.i(96484),f=b([d,e]);[d,e]=f.then?(await f)():f,a.s(["00e688284d791d0fb7fbee51fecc4ef604afb4131c",()=>e.getProjects,"40155db28b88fe71857eb6a6b84626cd6672e41dee",()=>e.createProject,"409aa7d2c723e07611a9f2e1df83b60a313930485e",()=>e.getProjectById,"40a120f324c3f668fc57284b59ac14769c60103cc6",()=>e.deleteProject,"40b14e9625f283c469140b6fe2d677317660d068e5",()=>e.getProjectBySlug,"40c6dc917b8d84555a870a929d6eef503e2551ed92",()=>e.updateProject]),c()}catch(a){c(a)}},!1)];
+
+//# sourceMappingURL=_next-internal_server_app_about_page_actions_c9d5f9aa.js.map

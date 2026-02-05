@@ -1,0 +1,95 @@
+{
+  "node": {
+    "00e688284d791d0fb7fbee51fecc4ef604afb4131c": {
+      "workers": {
+        "app/admin/edit/[id]/page": {
+          "moduleId": 61135,
+          "async": true,
+          "exportedName": "getProjects",
+          "filename": "src/app/actions/projects.ts"
+        }
+      },
+      "layer": {
+        "app/admin/edit/[id]/page": "rsc"
+      },
+      "exportedName": "getProjects",
+      "filename": "src/app/actions/projects.ts"
+    },
+    "40155db28b88fe71857eb6a6b84626cd6672e41dee": {
+      "workers": {
+        "app/admin/edit/[id]/page": {
+          "moduleId": 61135,
+          "async": true,
+          "exportedName": "createProject",
+          "filename": "src/app/actions/projects.ts"
+        }
+      },
+      "layer": {
+        "app/admin/edit/[id]/page": "rsc"
+      },
+      "exportedName": "createProject",
+      "filename": "src/app/actions/projects.ts"
+    },
+    "409aa7d2c723e07611a9f2e1df83b60a313930485e": {
+      "workers": {
+        "app/admin/edit/[id]/page": {
+          "moduleId": 61135,
+          "async": true,
+          "exportedName": "getProjectById",
+          "filename": "src/app/actions/projects.ts"
+        }
+      },
+      "layer": {
+        "app/admin/edit/[id]/page": "rsc"
+      },
+      "exportedName": "getProjectById",
+      "filename": "src/app/actions/projects.ts"
+    },
+    "40a120f324c3f668fc57284b59ac14769c60103cc6": {
+      "workers": {
+        "app/admin/edit/[id]/page": {
+          "moduleId": 61135,
+          "async": true,
+          "exportedName": "deleteProject",
+          "filename": "src/app/actions/projects.ts"
+        }
+      },
+      "layer": {
+        "app/admin/edit/[id]/page": "rsc"
+      },
+      "exportedName": "deleteProject",
+      "filename": "src/app/actions/projects.ts"
+    },
+    "40b14e9625f283c469140b6fe2d677317660d068e5": {
+      "workers": {
+        "app/admin/edit/[id]/page": {
+          "moduleId": 61135,
+          "async": true,
+          "exportedName": "getProjectBySlug",
+          "filename": "src/app/actions/projects.ts"
+        }
+      },
+      "layer": {
+        "app/admin/edit/[id]/page": "rsc"
+      },
+      "exportedName": "getProjectBySlug",
+      "filename": "src/app/actions/projects.ts"
+    },
+    "40c6dc917b8d84555a870a929d6eef503e2551ed92": {
+      "workers": {
+        "app/admin/edit/[id]/page": {
+          "moduleId": 61135,
+          "async": true,
+          "exportedName": "updateProject",
+          "filename": "src/app/actions/projects.ts"
+        }
+      },
+      "layer": {
+        "app/admin/edit/[id]/page": "rsc"
+      },
+      "exportedName": "updateProject",
+      "filename": "src/app/actions/projects.ts"
+    }
+  },
+  "edge": {}
+}
