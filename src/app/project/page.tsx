@@ -15,6 +15,7 @@ interface Project {
     description?: string | null;
     createdAt?: string;
     updatedAt?: string;
+    gallery?: string[] | null;
 }
 
 function ProjectViewer() {
@@ -137,6 +138,30 @@ function ProjectViewer() {
                         </p>
                     </div>
                 </div>
+
+                {/* Gallery Section */}
+                {project.gallery && project.gallery.length > 0 && (
+                    <div className="mt-32 space-y-10">
+                        <div className="flex items-center gap-4">
+                            <span className="h-px flex-1 bg-zinc-900" />
+                            <h3 className="font-mono text-xs uppercase text-zinc-500 tracking-widest">Gallery & Moments</h3>
+                            <span className="h-px flex-1 bg-zinc-900" />
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {project.gallery.map((image, index) => (
+                                <div key={index} className="group relative aspect-[4/5] bg-zinc-900 overflow-hidden rounded-sm hover:-translate-y-2 transition-transform duration-500 ease-out">
+                                    <img
+                                        src={image}
+                                        alt={`${project.title} gallery ${index + 1}`}
+                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                                        loading="lazy"
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
             </div>
         </main>
     );

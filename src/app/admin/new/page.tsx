@@ -5,17 +5,18 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import AdminLayout from "@/components/admin/AdminLayout";
 import ProtectedRoute from "@/components/admin/ProtectedRoute";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft, Loader2, Check } from "lucide-react";
+import { ArrowLeft, Loader2, Check, Smartphone, Monitor, Plus, X, Image as ImageIcon } from "lucide-react";
 import { slugify } from "@/lib/utils";
+import { motion } from "framer-motion";
+import ImageUpload from "@/components/admin/ImageUpload";
 
 export default function NewProjectPage() {
     const [loading, setLoading] = useState(false);
-    const [thumbnailPreview, setThumbnailPreview] = useState("");
+    const [previewMode, setPreviewMode] = useState<"desktop" | "mobile">("desktop");
     const [formData, setFormData] = useState({
         title: "",
         slug: "",
@@ -23,7 +24,11 @@ export default function NewProjectPage() {
         category: "",
         thumbnail: "",
         videoUrl: "",
+        gallery: [] as string[],
     });
+
+    // Temp state for new gallery image input
+    const [newGalleryImage, setNewGalleryImage] = useState("");
 
     // Suggested categories (user can still type their own)
     const suggestedCategories = ["Commercial", "Music Video", "Narrative", "Spec"];
@@ -43,14 +48,31 @@ export default function NewProjectPage() {
             if (res.ok) {
                 router.push("/admin");
             } else {
-                alert("Error al crear proyecto");
+                alert("Error creating project");
             }
         } catch (error) {
             console.error("Error:", error);
-            alert("Error al crear proyecto");
+            alert("Error creating project");
         } finally {
             setLoading(false);
         }
+    };
+
+    // Add gallery image
+    const addGalleryImage = (url: string) => {
+        if (!url) return;
+        setFormData(prev => ({
+            ...prev,
+            gallery: [...(prev.gallery || []), url]
+        }));
+    };
+
+    // Remove gallery image
+    const removeGalleryImage = (index: number) => {
+        setFormData(prev => ({
+            ...prev,
+            gallery: prev.gallery.filter((_, i) => i !== index)
+        }));
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -62,51 +84,78 @@ export default function NewProjectPage() {
             const slug = slugify(value);
             setFormData(prev => ({ ...prev, slug }));
         }
-
-        // Preview thumbnail
-        if (name === "thumbnail") {
-            setThumbnailPreview(value);
-        }
     };
 
     return (
         <ProtectedRoute>
             <AdminLayout>
-                {/* Header */}
-                <div className="mb-8">
-                    <Link href="/admin" className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-[#FF8562] mb-4">
-                        <ArrowLeft className="h-4 w-4" />
-                        Volver al Panel
-                    </Link>
-                    <h1 className="text-3xl font-semibold tracking-tight text-white">Nuevo Proyecto</h1>
-                    <p className="text-zinc-400 mt-1">Crear una nueva pieza de portafolio</p>
-                </div>
+                <div className="h-[calc(100vh-4rem)] flex flex-col lg:flex-row gap-6 lg:gap-0 lg:-m-8">
+                    {/* Left: Editor (Scrollable) */}
+                    <div className="flex-1 lg:max-w-xl xl:max-w-2xl lg:border-r border-white/10 lg:h-full lg:overflow-y-auto p-6 lg:p-10 bg-black">
+                        <div className="max-w-md mx-auto space-y-8">
+                            {/* Header */}
+                            <div>
+                                <Link href="/admin" className="inline-flex items-center gap-2 text-sm text-zinc-500 hover:text-white transition-colors mb-6">
+                                    <ArrowLeft className="h-4 w-4" />
+                                    Back to Dashboard
+                                </Link>
+                                <h1 className="text-3xl font-bold tracking-tight text-white">New Project</h1>
+                                <p className="text-zinc-400 mt-2">Create a new portfolio piece. Viewing live preview on the right.</p>
+                            </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    {/* Form */}
-                    <div>
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Detalles del Proyecto</CardTitle>
-                                <CardDescription>Completa la información a continuación</CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <form onSubmit={handleSubmit} className="space-y-6">
+                            {/* Form */}
+                            <form onSubmit={handleSubmit} className="space-y-8">
+                                <div className="space-y-4">
                                     <div className="space-y-2">
-                                        <Label htmlFor="title">Título *</Label>
+                                        <Label htmlFor="title" className="text-zinc-300">Project Title</Label>
                                         <Input
                                             id="title"
                                             name="title"
                                             value={formData.title}
                                             onChange={handleChange}
                                             required
-                                            placeholder="Midnight Echo"
-                                            className="text-base"
+                                            placeholder="e.g. Midnight Echo"
+                                            className="h-12 text-lg bg-zinc-900/50 border-zinc-800 focus:border-orange-500/50 transition-colors"
                                         />
                                     </div>
 
                                     <div className="space-y-2">
-                                        <Label htmlFor="slug">Slug *</Label>
+                                        <Label className="text-zinc-300">Gallery Images</Label>
+
+                                        <ImageUpload
+                                            onChange={addGalleryImage}
+                                            label="Add Gallery Image"
+                                            folder="gallery"
+                                        />
+
+                                        {/* Gallery List */}
+                                        <div className="space-y-2 mt-4">
+                                            {formData.gallery?.map((url, idx) => (
+                                                <div key={idx} className="flex items-center gap-2 p-2 bg-zinc-900 rounded border border-zinc-800 group">
+                                                    <div className="h-10 w-16 bg-zinc-800 rounded overflow-hidden shrink-0 relative">
+                                                        <img src={url} alt="" className="h-full w-full object-cover" />
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <p className="text-xs text-zinc-500 truncate">{url.split('/').pop()?.split('?')[0] || url}</p>
+                                                    </div>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => removeGalleryImage(idx)}
+                                                        className="p-1.5 hover:bg-red-500/10 hover:text-red-400 text-zinc-500 transition-colors rounded"
+                                                    >
+                                                        <X className="h-4 w-4" />
+                                                    </button>
+                                                </div>
+                                            ))}
+                                            {(!formData.gallery || formData.gallery.length === 0) && (
+                                                <p className="text-xs text-zinc-500 italic text-center py-4 border border-zinc-800 border-dashed rounded">
+                                                    No gallery images added yet
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="slug" className="text-zinc-300">URL Slug</Label>
                                         <div className="relative">
                                             <Input
                                                 id="slug"
@@ -115,147 +164,214 @@ export default function NewProjectPage() {
                                                 onChange={handleChange}
                                                 required
                                                 placeholder="midnight-echo"
-                                                className="text-base pr-8"
+                                                className="bg-zinc-900/50 border-zinc-800 text-zinc-400 font-mono text-sm"
                                             />
                                             {formData.slug && (
-                                                <Check className="absolute right-3 top-3 h-4 w-4 text-[#FF8562]" />
+                                                <Check className="absolute right-3 top-3 h-4 w-4 text-green-500" />
                                             )}
                                         </div>
-                                        <p className="text-xs text-zinc-400">Generado automáticamente del título</p>
                                     </div>
 
                                     <div className="space-y-2">
-                                        <Label htmlFor="category">Categoría *</Label>
-                                        <Input
-                                            id="category"
-                                            name="category"
-                                            value={formData.category}
-                                            onChange={handleChange}
-                                            required
-                                            placeholder="Escribe o selecciona una categoría"
-                                            list="category-suggestions"
-                                            className="text-base"
-                                        />
-                                        <datalist id="category-suggestions">
+                                        <Label htmlFor="category" className="text-zinc-300">Category</Label>
+                                        <div className="relative">
+                                            <Input
+                                                id="category"
+                                                name="category"
+                                                value={formData.category}
+                                                onChange={handleChange}
+                                                required
+                                                placeholder="Select or type..."
+                                                list="category-suggestions"
+                                                className="bg-zinc-900/50 border-zinc-800"
+                                            />
+                                            <datalist id="category-suggestions">
+                                                {suggestedCategories.map(cat => (
+                                                    <option key={cat} value={cat} />
+                                                ))}
+                                            </datalist>
+                                        </div>
+                                        <div className="flex gap-2 flex-wrap mt-2">
                                             {suggestedCategories.map(cat => (
-                                                <option key={cat} value={cat} />
+                                                <button
+                                                    key={cat}
+                                                    type="button"
+                                                    onClick={() => setFormData(prev => ({ ...prev, category: cat }))}
+                                                    className={`text-xs px-3 py-1 rounded-full border transition-all ${formData.category === cat
+                                                        ? "bg-orange-500 text-white border-orange-500"
+                                                        : "border-zinc-800 text-zinc-500 hover:text-zinc-300 hover:border-zinc-700"
+                                                        }`}
+                                                >
+                                                    {cat}
+                                                </button>
                                             ))}
-                                        </datalist>
-                                        <p className="text-xs text-zinc-400">Puedes escribir tu propia categoría o seleccionar una sugerida</p>
+                                        </div>
                                     </div>
 
                                     <div className="space-y-2">
-                                        <Label htmlFor="thumbnail">URL de Miniatura *</Label>
-                                        <Input
-                                            id="thumbnail"
-                                            name="thumbnail"
-                                            type="url"
+                                        <Label className="text-zinc-300">Thumbnail Image</Label>
+                                        <ImageUpload
                                             value={formData.thumbnail}
-                                            onChange={handleChange}
-                                            required
-                                            placeholder="https://images.unsplash.com/..."
-                                            className="text-base"
+                                            onChange={(url) => setFormData(prev => ({ ...prev, thumbnail: url }))}
+                                            folder="thumbnails"
                                         />
-                                        <p className="text-xs text-zinc-400">La vista previa aparecerá a la derecha</p>
                                     </div>
 
                                     <div className="space-y-2">
-                                        <Label htmlFor="videoUrl">URL de YouTube (Opcional)</Label>
-                                        <Input
-                                            id="videoUrl"
-                                            name="videoUrl"
-                                            type="url"
-                                            value={formData.videoUrl}
-                                            onChange={handleChange}
-                                            placeholder="https://youtube.com/watch?v=..."
-                                            className="text-base"
-                                        />
-                                        <p className="text-xs text-zinc-400">Agrega un enlace de YouTube si el proyecto tiene video</p>
-                                    </div>
-
-                                    <div className="space-y-2">
-                                        <Label htmlFor="description">Descripción</Label>
+                                        <Label htmlFor="description" className="text-zinc-300">Description</Label>
                                         <Textarea
                                             id="description"
                                             name="description"
                                             value={formData.description}
                                             onChange={handleChange}
                                             rows={4}
-                                            placeholder="A cinematic exploration of..."
-                                            className="resize-none"
+                                            placeholder="Write a brief description..."
+                                            className="resize-none bg-zinc-900/50 border-zinc-800 focus:border-orange-500/50"
                                         />
                                     </div>
 
-                                    <div className="flex gap-3 pt-4">
-                                        <Button type="submit" disabled={loading} className="flex-1 gap-2">
-                                            {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-                                            {loading ? "Creando..." : "Crear Proyecto"}
-                                        </Button>
-                                        <Link href="/admin" className="flex-1">
-                                            <Button type="button" variant="outline" className="w-full">
-                                                Cancelar
-                                            </Button>
-                                        </Link>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="videoUrl" className="text-zinc-300">Video Link (Optional)</Label>
+                                        <Input
+                                            id="videoUrl"
+                                            name="videoUrl"
+                                            type="url"
+                                            value={formData.videoUrl}
+                                            onChange={handleChange}
+                                            placeholder="YouTube / Vimeo URL"
+                                            className="bg-zinc-900/50 border-zinc-800"
+                                        />
                                     </div>
-                                </form>
-                            </CardContent>
-                        </Card>
+                                </div>
+
+                                <div className="pt-6 border-t border-white/5 flex gap-4">
+                                    <Button type="submit" disabled={loading} size="lg" className="flex-1 text-base font-semibold shadow-xl shadow-orange-900/20">
+                                        {loading && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+                                        {loading ? "Creating..." : "Create Project"}
+                                    </Button>
+                                    <Link href="/admin">
+                                        <Button type="button" variant="outline" size="lg" className="border-zinc-800 bg-transparent text-zinc-400 hover:text-white">
+                                            Cancel
+                                        </Button>
+                                    </Link>
+                                </div>
+                            </form>
+                        </div>
                     </div>
 
-                    {/* Live Preview */}
-                    <div className="space-y-6">
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Vista Previa</CardTitle>
-                                <CardDescription>Cómo aparecerá tu proyecto</CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="space-y-4">
-                                    {/* Card Preview */}
-                                    <div className="border border-zinc-700 rounded-lg overflow-hidden bg-zinc-800 shadow-sm">
-                                        <div className="aspect-video bg-zinc-900">
-                                            {thumbnailPreview ? (
+                    {/* Right: Live Preview (Fixed) */}
+                    <div className="hidden lg:flex flex-1 bg-zinc-950 items-center justify-center p-8 relative overflow-hidden">
+                        {/* Background Grid Pattern */}
+                        <div className="absolute inset-0 opacity-20" style={{
+                            backgroundImage: 'linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px)',
+                            backgroundSize: '40px 40px'
+                        }} />
+
+                        <div className="relative z-10 w-full max-w-2xl flex flex-col h-full max-h-[800px]">
+                            {/* Device Controls */}
+                            <div className="bg-zinc-900/80 backdrop-blur-md rounded-t-xl border border-white/10 p-3 flex items-center justify-between">
+                                <div className="flex gap-2">
+                                    <div className="h-3 w-3 rounded-full bg-red-500/20" />
+                                    <div className="h-3 w-3 rounded-full bg-yellow-500/20" />
+                                    <div className="h-3 w-3 rounded-full bg-green-500/20" />
+                                </div>
+                                <div className="flex gap-1 bg-black/50 p-1 rounded-lg">
+                                    <button
+                                        onClick={() => setPreviewMode("desktop")}
+                                        className={`p-1.5 rounded-md transition-all ${previewMode === "desktop" ? "bg-zinc-800 text-white" : "text-zinc-500 hover:text-zinc-300"}`}
+                                    >
+                                        <Monitor className="h-4 w-4" />
+                                    </button>
+                                    <button
+                                        onClick={() => setPreviewMode("mobile")}
+                                        className={`p-1.5 rounded-md transition-all ${previewMode === "mobile" ? "bg-zinc-800 text-white" : "text-zinc-500 hover:text-zinc-300"}`}
+                                    >
+                                        <Smartphone className="h-4 w-4" />
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Device Frame */}
+                            <div className={`
+                                bg-black border-x border-b border-white/10 shadow-2xl transition-all duration-500 ease-in-out flex-1 overflow-hidden relative
+                                ${previewMode === "mobile" ? "max-w-[375px] mx-auto rounded-b-3xl border-b-8 border-b-zinc-900" : "w-full rounded-b-xl"}
+                            `}>
+                                {/* Mock Site Content */}
+                                <div className="h-full overflow-y-auto bg-black text-white">
+                                    {/* Mock Header */}
+                                    <div className="h-14 border-b border-white/10 flex items-center justify-between px-6 sticky top-0 bg-black/80 backdrop-blur z-20">
+                                        <div className="text-sm font-bold uppercase tracking-widest">Berenjena</div>
+                                        <div className="h-4 w-4 rounded-full border border-white/50" />
+                                    </div>
+
+                                    {/* Mock Hero Project */}
+                                    <div className="p-6 space-y-6">
+                                        <div className="aspect-video bg-zinc-900 rounded-lg overflow-hidden relative group">
+                                            {formData.thumbnail ? (
                                                 <img
-                                                    src={thumbnailPreview}
+                                                    src={formData.thumbnail}
                                                     alt="Preview"
                                                     className="w-full h-full object-cover"
-                                                    onError={() => setThumbnailPreview("")}
                                                 />
                                             ) : (
-                                                <div className="w-full h-full flex items-center justify-center text-zinc-500 text-sm">
-                                                    Vista previa de miniatura
+                                                <div className="w-full h-full flex flex-col items-center justify-center text-zinc-700 gap-2">
+                                                    <div className="h-10 w-10 border-2 border-dashed border-zinc-800 rounded flex items-center justify-center">
+                                                        <span className="text-xs">IMG</span>
+                                                    </div>
+                                                    <span className="text-xs">No image provided</span>
+                                                </div>
+                                            )}
+
+                                            {/* Hover info overlay */}
+                                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                <span className="text-sm font-medium tracking-widest uppercase text-white border border-white px-4 py-2">
+                                                    View Project
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <div className="flex items-start justify-between">
+                                                <h1 className="text-2xl md:text-4xl font-bold uppercase leading-none">
+                                                    {formData.title || "Untitled Project"}
+                                                </h1>
+                                                <span className="text-xs border border-white/20 px-2 py-1 rounded-full text-zinc-400">
+                                                    {formData.category || "Uncategorized"}
+                                                </span>
+                                            </div>
+
+                                            {formData.description ? (
+                                                <p className="text-zinc-400 text-sm md:text-base leading-relaxed max-w-lg">
+                                                    {formData.description}
+                                                </p>
+                                            ) : (
+                                                <div className="space-y-2">
+                                                    <div className="h-2 w-full bg-zinc-900 rounded animate-pulse" />
+                                                    <div className="h-2 w-2/3 bg-zinc-900 rounded animate-pulse" />
                                                 </div>
                                             )}
                                         </div>
-                                        <div className="p-4">
-                                            <h3 className="font-semibold text-lg truncate text-white">
-                                                {formData.title || "Título del Proyecto"}
-                                            </h3>
-                                            <p className="text-sm text-zinc-400 mt-1">
-                                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-[#FF8562] text-white">
-                                                    {formData.category}
-                                                </span>
-                                            </p>
-                                            {formData.description && (
-                                                <p className="text-sm text-zinc-300 mt-3 line-clamp-2">
-                                                    {formData.description}
-                                                </p>
-                                            )}
-                                        </div>
-                                    </div>
 
-                                    {/* URL Preview */}
-                                    {formData.slug && (
-                                        <div className="p-4 bg-zinc-800 rounded-lg border border-zinc-700">
-                                            <p className="text-xs text-zinc-400 mb-1">URL Pública</p>
-                                            <code className="text-sm text-white break-all">
-                                                /project?slug={formData.slug}
-                                            </code>
-                                        </div>
-                                    )}
+                                        {/* Gallery Preview */}
+                                        {formData.gallery && formData.gallery.length > 0 && (
+                                            <div className="space-y-4 pt-6 border-t border-white/10">
+                                                <div className="flex items-center gap-2">
+                                                    <ImageIcon className="h-4 w-4 text-zinc-500" />
+                                                    <h3 className="text-xs font-mono uppercase tracking-widest text-zinc-500">Gallery Preview</h3>
+                                                </div>
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    {formData.gallery.map((url, i) => (
+                                                        <div key={i} className="aspect=[4/5] bg-zinc-900 rounded overflow-hidden">
+                                                            <img src={url} alt="" className="w-full h-full object-cover" />
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
-                            </CardContent>
-                        </Card>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </AdminLayout>

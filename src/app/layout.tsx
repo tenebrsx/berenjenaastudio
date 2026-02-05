@@ -11,6 +11,7 @@ import Cursor from "@/components/Cursor";
 import { PROJECTS } from "@/lib/data";
 import { slugify } from "@/lib/utils";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 // Configure fonts
 const inter = Inter({
@@ -28,14 +29,27 @@ const robotoMono = Roboto_Mono({
 function RootLayoutContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isAdminRoute = pathname?.startsWith("/admin");
+  const [categories, setCategories] = useState<{ label: string; href: string }[]>([]);
 
-  // Generate categories from static data
-  const uniqueCategories = Array.from(new Set(PROJECTS.map(p => p.category)));
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch("https://us-central1-berenjenastudiofinal.cloudfunctions.net/getProjects");
+        if (!res.ok) return;
+        const projects = await res.json();
+        const uniqueCats = Array.from(new Set(projects.map((p: any) => p.category))) as string[];
 
-  const categoryLinks = uniqueCategories.map(cat => ({
-    label: cat,
-    href: `/${slugify(cat)}`
-  }));
+        setCategories(uniqueCats.map(cat => ({
+          label: cat,
+          href: `/${slugify(cat)}`
+        })));
+      } catch (error) {
+        console.error("Failed to fetch categories:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   // For admin routes, skip the public header/footer
   if (isAdminRoute) {
@@ -51,7 +65,7 @@ function RootLayoutContent({ children }: { children: React.ReactNode }) {
     <CursorProvider>
       <Cursor />
       <SmoothScroll>
-        <Header categories={categoryLinks} />
+        <Header categories={categories} />
         {children}
         <Footer />
       </SmoothScroll>

@@ -206,9 +206,9 @@ export default function ProjectsPage() {
                     /* Grid View */
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {filteredProjects.map((project) => (
-                            <Card key={project.id} className="overflow-hidden group hover:shadow-lg transition-shadow">
+                            <Card key={project.id} className="overflow-hidden group hover:shadow-lg transition-shadow bg-zinc-900/50 border-white/5">
                                 {/* Thumbnail */}
-                                <div className="aspect-video bg-zinc-800 overflow-hidden relative">
+                                <div className="aspect-video bg-zinc-800/50 overflow-hidden relative">
                                     <img
                                         src={project.thumbnail}
                                         alt={project.title}
@@ -265,7 +265,7 @@ export default function ProjectsPage() {
                     /* List View */
                     <div className="space-y-3">
                         {filteredProjects.map((project) => (
-                            <Card key={project.id} className="hover:shadow-md transition-shadow">
+                            <Card key={project.id} className="hover:shadow-md transition-shadow bg-zinc-900/50 border-white/5">
                                 <CardContent className="p-4">
                                     <div className="flex items-center gap-4">
                                         {/* Thumbnail */}

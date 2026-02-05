@@ -47,7 +47,7 @@ export default function AdminSidebar() {
             {/* Sidebar */}
             <aside
                 className={cn(
-                    "fixed inset-y-0 left-0 z-40 w-64 bg-black border-r border-zinc-800 transform transition-transform duration-200 ease-in-out",
+                    "fixed inset-y-0 left-0 z-40 w-64 bg-black/80 backdrop-blur-xl border-r border-white/10 transform transition-transform duration-300 ease-spring",
                     mobileMenuOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
                 )}
             >
