@@ -23,7 +23,7 @@ export default function SettingsPage() {
 
     const fetchSettings = async () => {
         try {
-            const res = await fetch("https://us-central1-berenjenastudiofinal.cloudfunctions.net/getSettings");
+            const res = await fetch("https://getsettings-ie4kq7otea-uc.a.run.app");
             const data = await res.json();
             setHeroVideoUrl(data.heroVideoUrl || "");
             setVideoPreview(data.heroVideoUrl || "");
@@ -37,7 +37,7 @@ export default function SettingsPage() {
         setLoading(true);
 
         try {
-            const res = await fetch("https://us-central1-berenjenastudiofinal.cloudfunctions.net/updateSettings", {
+            const res = await fetch("https://updatesettings-ie4kq7otea-uc.a.run.app", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ heroVideoUrl }),

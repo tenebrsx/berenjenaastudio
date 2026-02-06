@@ -20,7 +20,7 @@ export default function ImageUpload({
     value,
     onChange,
     onRemove,
-    label = "Subir Imagen",
+    label = "Subir Imagen (JPG, PNG, GIF)",
     className,
     folder = "projects"
 }: ImageUploadProps) {

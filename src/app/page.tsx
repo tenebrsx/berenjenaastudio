@@ -30,12 +30,12 @@ export default function Home() {
   const fetchData = async () => {
     try {
       // Fetch projects
-      const projectsRes = await fetch("https://us-central1-berenjenastudiofinal.cloudfunctions.net/getProjects");
+      const projectsRes = await fetch("https://getprojects-ie4kq7otea-uc.a.run.app");
       const projectsData = await projectsRes.json();
       setProjects(projectsData);
 
       // Fetch settings (for hero video URL)
-      const settingsRes = await fetch("https://us-central1-berenjenastudiofinal.cloudfunctions.net/getSettings");
+      const settingsRes = await fetch("https://getsettings-ie4kq7otea-uc.a.run.app");
       const settingsData = await settingsRes.json();
       if (settingsData.heroVideoUrl) {
         setVideoUrl(settingsData.heroVideoUrl);

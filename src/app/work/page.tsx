@@ -27,7 +27,7 @@ export default function WorkPage() {
 
     const fetchData = async () => {
         try {
-            const res = await fetch("https://us-central1-berenjenastudiofinal.cloudfunctions.net/getProjects");
+            const res = await fetch("https://getprojects-ie4kq7otea-uc.a.run.app");
             const data = await res.json();
             setProjects(data);
         } catch (error) {

@@ -33,7 +33,7 @@ export const createProject = functions.onRequest(async (req, res) => {
     }
 
     try {
-        const { title, slug, description, category, thumbnail } = req.body;
+        const { title, slug, description, category, thumbnail, videoUrl, credits, gallery } = req.body;
 
         const newProject = {
             title,
@@ -41,6 +41,9 @@ export const createProject = functions.onRequest(async (req, res) => {
             description,
             thumbnail,
             category,
+            videoUrl: videoUrl || "",
+            credits: credits || [],
+            gallery: gallery || [],
             createdAt: admin.firestore.FieldValue.serverTimestamp(),
         };
 
@@ -62,7 +65,7 @@ export const updateProject = functions.onRequest(async (req, res) => {
 
     try {
         const slug = req.path.split("/").pop();
-        const { title, description, category } = req.body;
+        const { title, description, category, thumbnail, videoUrl, credits, gallery } = req.body;
 
         const snapshot = await db
             .collection("projects")
@@ -75,7 +78,15 @@ export const updateProject = functions.onRequest(async (req, res) => {
             return;
         }
 
-        await snapshot.docs[0].ref.update({ title, description, category });
+        await snapshot.docs[0].ref.update({
+            title,
+            description,
+            category,
+            thumbnail,
+            videoUrl: videoUrl || "",
+            credits: credits || [],
+            gallery: gallery || []
+        });
         res.json({ success: true });
     } catch (error) {
         console.error("Error updating project:", error);

@@ -47,7 +47,7 @@ export default function ProjectsPage() {
 
     const fetchProjects = async () => {
         try {
-            const res = await fetch("https://us-central1-berenjenastudiofinal.cloudfunctions.net/getProjects");
+            const res = await fetch("https://getprojects-ie4kq7otea-uc.a.run.app");
             const data = await res.json();
             setProjects(data);
         } catch (error) {
@@ -63,7 +63,7 @@ export default function ProjectsPage() {
         }
 
         try {
-            const res = await fetch("https://us-central1-berenjenastudiofinal.cloudfunctions.net/deleteProject", {
+            const res = await fetch("https://deleteproject-ie4kq7otea-uc.a.run.app", {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ slug }),

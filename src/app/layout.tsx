@@ -34,7 +34,7 @@ function RootLayoutContent({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await fetch("https://us-central1-berenjenastudiofinal.cloudfunctions.net/getProjects");
+        const res = await fetch("https://getprojects-ie4kq7otea-uc.a.run.app");
         if (!res.ok) return;
         const projects = await res.json();
         const uniqueCats = Array.from(new Set(projects.map((p: any) => p.category))) as string[];

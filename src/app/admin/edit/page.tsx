@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft, Loader2, Check, Smartphone, Monitor, X, Image as ImageIcon } from "lucide-react";
+import { ArrowLeft, Loader2, Check, Smartphone, Monitor, X, Image as ImageIcon, Plus } from "lucide-react";
 import { motion } from "framer-motion";
 import ImageUpload from "@/components/admin/ImageUpload";
 
@@ -21,6 +21,7 @@ interface Project {
     thumbnail: string;
     description?: string;
     videoUrl?: string;
+    credits?: { role: string; name: string }[];
     gallery?: string[];
 }
 
@@ -39,6 +40,7 @@ function EditContent() {
         category: "",
         thumbnail: "",
         videoUrl: "",
+        credits: [] as { role: string; name: string }[],
         gallery: [] as string[],
     });
 
@@ -55,7 +57,7 @@ function EditContent() {
 
     const fetchProject = async () => {
         try {
-            const res = await fetch("https://us-central1-berenjenastudiofinal.cloudfunctions.net/getProjects");
+            const res = await fetch("https://getprojects-ie4kq7otea-uc.a.run.app");
             const projects: Project[] = await res.json();
             const found = projects.find(p => p.id === projectId);
 
@@ -68,6 +70,7 @@ function EditContent() {
                     category: found.category,
                     thumbnail: found.thumbnail,
                     videoUrl: found.videoUrl || "",
+                    credits: found.credits || [],
                     gallery: found.gallery || [],
                 });
             }
@@ -95,13 +98,36 @@ function EditContent() {
         }));
     };
 
+    // Add Credit
+    const addCredit = () => {
+        setFormData(prev => ({
+            ...prev,
+            credits: [...prev.credits, { role: "", name: "" }]
+        }));
+    };
+
+    // Update Credit
+    const updateCredit = (index: number, field: "role" | "name", value: string) => {
+        const newCredits = [...formData.credits];
+        newCredits[index][field] = value;
+        setFormData(prev => ({ ...prev, credits: newCredits }));
+    };
+
+    // Remove Credit
+    const removeCredit = (index: number) => {
+        setFormData(prev => ({
+            ...prev,
+            credits: prev.credits.filter((_, i) => i !== index)
+        }));
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!project) return;
         setLoading(true);
 
         try {
-            const res = await fetch("https://us-central1-berenjenastudiofinal.cloudfunctions.net/updateProject", {
+            const res = await fetch("https://updateproject-ie4kq7otea-uc.a.run.app", {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ ...formData }),
@@ -216,7 +242,7 @@ function EditContent() {
                                     </div>
 
                                     <div className="space-y-2">
-                                        <Label className="text-zinc-300">Imagen Principal</Label>
+                                        <Label className="text-zinc-300">Imagen Principal (Soporta GIF)</Label>
                                         <ImageUpload
                                             value={formData.thumbnail}
                                             onChange={(url) => setFormData(prev => ({ ...prev, thumbnail: url }))}
@@ -283,6 +309,53 @@ function EditContent() {
                                             placeholder="YouTube / Vimeo URL"
                                             className="bg-zinc-900/50 border-zinc-800"
                                         />
+                                    </div>
+
+                                    <div className="space-y-4 pt-4 border-t border-zinc-800">
+                                        <div className="flex items-center justify-between">
+                                            <Label className="text-zinc-300">Créditos</Label>
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={addCredit}
+                                                className="border-zinc-800 bg-transparent text-zinc-400 hover:text-white"
+                                            >
+                                                <Smartphone className="h-4 w-4 mr-2 hidden" /> {/* Dummy icon to fix import if needed, but we use Plus */}
+                                                Añadir Crédito
+                                            </Button>
+                                        </div>
+
+                                        <div className="space-y-3">
+                                            {formData.credits.map((credit, idx) => (
+                                                <div key={idx} className="flex gap-3">
+                                                    <Input
+                                                        placeholder="Rol (ej. Director)"
+                                                        value={credit.role}
+                                                        onChange={(e) => updateCredit(idx, "role", e.target.value)}
+                                                        className="bg-zinc-900/50 border-zinc-800 flex-1"
+                                                    />
+                                                    <Input
+                                                        placeholder="Nombre"
+                                                        value={credit.name}
+                                                        onChange={(e) => updateCredit(idx, "name", e.target.value)}
+                                                        className="bg-zinc-900/50 border-zinc-800 flex-1"
+                                                    />
+                                                    <Button
+                                                        type="button"
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        onClick={() => removeCredit(idx)}
+                                                        className="text-zinc-500 hover:text-red-400"
+                                                    >
+                                                        <X className="h-4 w-4" />
+                                                    </Button>
+                                                </div>
+                                            ))}
+                                            {formData.credits.length === 0 && (
+                                                <p className="text-xs text-zinc-600 italic">No hay créditos añadidos</p>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
 

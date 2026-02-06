@@ -11,7 +11,7 @@ interface Project {
     year: string;
     thumbnail: string;
     videoUrl?: string | null;
-    credits?: string | null;
+    credits?: { role: string; name: string }[] | null;
     description?: string | null;
     createdAt?: string;
     updatedAt?: string;
@@ -35,7 +35,7 @@ function ProjectViewer() {
     const fetchProject = async (slugToFind: string) => {
         setLoading(true);
         try {
-            const res = await fetch("https://us-central1-berenjenastudiofinal.cloudfunctions.net/getProjects");
+            const res = await fetch("https://getprojects-ie4kq7otea-uc.a.run.app");
             if (!res.ok) {
                 console.error("Failed to fetch projects");
                 return;
@@ -138,6 +138,20 @@ function ProjectViewer() {
                         </p>
                     </div>
                 </div>
+
+                {/* Credits Section */}
+                {project.credits && project.credits.length > 0 && (
+                    <div className="md:col-span-8 md:col-start-5 mt-10">
+                        <div className="grid grid-cols-2 gap-y-4 gap-x-10">
+                            {project.credits.map((credit, index) => (
+                                <div key={index} className="flex flex-col">
+                                    <span className="text-xs font-mono uppercase text-zinc-500 tracking-wider mb-1">{credit.role}</span>
+                                    <span className="text-base font-light text-white">{credit.name}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
 
                 {/* Gallery Section */}
                 {project.gallery && project.gallery.length > 0 && (
