@@ -20,7 +20,7 @@ export default function ImageUpload({
     value,
     onChange,
     onRemove,
-    label = "Upload Image",
+    label = "Subir Imagen",
     className,
     folder = "projects"
 }: ImageUploadProps) {
@@ -124,7 +124,7 @@ export default function ImageUpload({
                                 {label}
                             </span>
                             <span className="text-xs text-zinc-600">
-                                Click to select file
+                                Click para seleccionar
                             </span>
                         </>
                     )}

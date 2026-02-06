@@ -68,23 +68,23 @@ export default function AdminDashboard() {
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                         <div>
                             <h1 className="text-4xl font-bold tracking-tight text-white mb-2">
-                                Dashboard
+                                Panel de Control
                             </h1>
                             <p className="text-zinc-400 max-w-md">
-                                Welcome back to your command center. Manage your portfolio and site settings from here.
+                                Bienvenido a tu centro de mando. Gestiona tu portafolio y la configuración del sitio desde aquí.
                             </p>
                         </div>
                         <div className="flex gap-3">
                             <Link href="/project" target="_blank">
                                 <Button variant="secondary" className="gap-2">
                                     <Eye className="h-4 w-4" />
-                                    View Site
+                                    Ver Sitio
                                 </Button>
                             </Link>
                             <Link href="/admin/new">
                                 <Button className="gap-2 shadow-lg shadow-orange-900/20">
                                     <Plus className="h-4 w-4" />
-                                    New Project
+                                    Nuevo Proyecto
                                 </Button>
                             </Link>
                         </div>
@@ -101,14 +101,14 @@ export default function AdminDashboard() {
                         <motion.div variants={item}>
                             <Card className="h-full bg-zinc-900/50 border-white/5 hover:border-white/10 transition-colors">
                                 <CardHeader className="pb-2">
-                                    <CardDescription>Total Projects</CardDescription>
+                                    <CardDescription>Total de Proyectos</CardDescription>
                                     <CardTitle className="text-4xl font-light text-white">
                                         {loading ? "..." : projects.length}
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent>
                                     <div className="text-sm text-zinc-500">
-                                        Active portfolio pieces
+                                        Piezas activas del portafolio
                                     </div>
                                 </CardContent>
                             </Card>
@@ -123,9 +123,9 @@ export default function AdminDashboard() {
                                         <div className="h-10 w-10 rounded-full bg-orange-500/20 flex items-center justify-center mb-4 text-orange-500 group-hover:scale-110 transition-transform">
                                             <Video className="h-5 w-5" />
                                         </div>
-                                        <CardTitle className="text-white group-hover:text-orange-400 transition-colors">Create Project</CardTitle>
+                                        <CardTitle className="text-white group-hover:text-orange-400 transition-colors">Crear Proyecto</CardTitle>
                                         <CardDescription>
-                                            Add a new video or project to your portfolio
+                                            Añade un nuevo video o proyecto a tu portafolio
                                         </CardDescription>
                                     </CardHeader>
                                     <CardContent className="flex justify-end">
@@ -143,9 +143,9 @@ export default function AdminDashboard() {
                                         <div className="h-10 w-10 rounded-full bg-zinc-800 flex items-center justify-center mb-4 text-zinc-400 group-hover:text-white transition-colors">
                                             <Settings className="h-5 w-5" />
                                         </div>
-                                        <CardTitle className="text-white">Site Settings</CardTitle>
+                                        <CardTitle className="text-white">Configuración del Sitio</CardTitle>
                                         <CardDescription>
-                                            Configure hero video and global options
+                                            Configura el video principal y opciones globales
                                         </CardDescription>
                                     </CardHeader>
                                     <CardContent className="flex justify-end">
@@ -159,9 +159,9 @@ export default function AdminDashboard() {
                     {/* Recent Projects List */}
                     <div className="space-y-6">
                         <div className="flex items-center justify-between border-b border-white/5 pb-4">
-                            <h2 className="text-xl font-semibold text-white">Recent Projects</h2>
+                            <h2 className="text-xl font-semibold text-white">Proyectos Recientes</h2>
                             <Link href="/admin/projects" className="text-sm text-orange-500 hover:text-orange-400 transition-colors flex items-center gap-1">
-                                View All <ArrowUpRight className="h-3 w-3" />
+                                Ver Todos <ArrowUpRight className="h-3 w-3" />
                             </Link>
                         </div>
 
@@ -174,7 +174,7 @@ export default function AdminDashboard() {
                         ) : projects.length === 0 ? (
                             <div className="text-center py-20 bg-zinc-900/30 rounded-xl border border-dashed border-zinc-800">
                                 <Film className="h-10 w-10 text-zinc-700 mx-auto mb-3" />
-                                <p className="text-zinc-500">No projects found</p>
+                                <p className="text-zinc-500">No se encontraron proyectos</p>
                             </div>
                         ) : (
                             <div className="space-y-3">
@@ -208,7 +208,7 @@ export default function AdminDashboard() {
                                             {/* Edit Action Icon */}
                                             <div className="px-4 opacity-0 group-hover:opacity-100 transition-opacity -translate-x-2 group-hover:translate-x-0 duration-300">
                                                 <span className="text-sm font-medium text-orange-500 flex items-center gap-1">
-                                                    Edit <ArrowUpRight className="h-3 w-3" />
+                                                    Editar <ArrowUpRight className="h-3 w-3" />
                                                 </span>
                                             </div>
                                         </div>
