@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 import AdminLayout from "@/components/admin/AdminLayout";
 import ProtectedRoute from "@/components/admin/ProtectedRoute";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, Loader2 } from "lucide-react";
+import MediaUpload from "@/components/admin/MediaUpload";
 
 export default function SettingsPage() {
     const [loading, setLoading] = useState(false);
@@ -23,10 +26,14 @@ export default function SettingsPage() {
 
     const fetchSettings = async () => {
         try {
-            const res = await fetch("https://getsettings-ie4kq7otea-uc.a.run.app");
-            const data = await res.json();
-            setHeroVideoUrl(data.heroVideoUrl || "");
-            setVideoPreview(data.heroVideoUrl || "");
+            const docRef = doc(db, "settings", "general");
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                setHeroVideoUrl(data.heroVideoUrl || "");
+                setVideoPreview(data.heroVideoUrl || "");
+            }
         } catch (error) {
             console.error("Error fetching settings:", error);
         }
@@ -37,18 +44,12 @@ export default function SettingsPage() {
         setLoading(true);
 
         try {
-            const res = await fetch("https://updatesettings-ie4kq7otea-uc.a.run.app", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ heroVideoUrl }),
-            });
+            await setDoc(doc(db, "settings", "general"), {
+                heroVideoUrl
+            }, { merge: true });
 
-            if (res.ok) {
-                setVideoPreview(heroVideoUrl);
-                alert("¡Configuración actualizada con éxito!");
-            } else {
-                alert("Error al actualizar configuración");
-            }
+            setVideoPreview(heroVideoUrl);
+            alert("¡Configuración actualizada con éxito!");
         } catch (error) {
             console.error("Error:", error);
             alert("Error al actualizar configuración");
@@ -70,25 +71,38 @@ export default function SettingsPage() {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <div>
+                    <div className="lg:col-span-2">
                         <Card>
                             <CardHeader>
                                 <CardTitle>Video Principal</CardTitle>
-                                <CardDescription>El video que se reproduce en la página de inicio</CardDescription>
+                                <CardDescription>El video que se reproduce en la página de inicio (MP4 o GIF)</CardDescription>
                             </CardHeader>
                             <CardContent>
                                 <form onSubmit={handleSubmit} className="space-y-6">
-                                    <div className="space-y-2">
-                                        <Label htmlFor="heroVideo">URL del Video</Label>
-                                        <Input
-                                            id="heroVideo"
-                                            type="url"
+                                    <div className="space-y-4">
+                                        <Label>Archivo de Video</Label>
+                                        <MediaUpload
                                             value={heroVideoUrl}
-                                            onChange={(e) => setHeroVideoUrl(e.target.value)}
-                                            placeholder="https://videos.pexels.com/..."
-                                            className="text-base"
+                                            onChange={(url) => {
+                                                setHeroVideoUrl(url);
+                                                setVideoPreview(url);
+                                            }}
+                                            folder="settings"
                                         />
-                                        <p className="text-xs text-zinc-400">Pega un enlace directo al video</p>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="heroVideo">O ingrese URL manualmente</Label>
+                                            <Input
+                                                id="heroVideo"
+                                                type="url"
+                                                value={heroVideoUrl}
+                                                onChange={(e) => {
+                                                    setHeroVideoUrl(e.target.value);
+                                                    setVideoPreview(e.target.value);
+                                                }}
+                                                placeholder="https://..."
+                                                className="text-base"
+                                            />
+                                        </div>
                                     </div>
 
                                     <div className="flex gap-3 pt-4">
@@ -103,34 +117,6 @@ export default function SettingsPage() {
                                         </Link>
                                     </div>
                                 </form>
-                            </CardContent>
-                        </Card>
-                    </div>
-
-                    {/* Preview */}
-                    <div>
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Vista Previa</CardTitle>
-                                <CardDescription>Cómo aparecerá en la página de inicio</CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="aspect-video bg-zinc-800 rounded-lg overflow-hidden">
-                                    {videoPreview ? (
-                                        <video
-                                            src={videoPreview}
-                                            autoPlay
-                                            loop
-                                            muted
-                                            playsInline
-                                            className="w-full h-full object-cover"
-                                        />
-                                    ) : (
-                                        <div className="w-full h-full flex items-center justify-center text-zinc-500 text-sm">
-                                            Vista previa del video
-                                        </div>
-                                    )}
-                                </div>
                             </CardContent>
                         </Card>
                     </div>

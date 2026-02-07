@@ -12,6 +12,8 @@ import { PROJECTS } from "@/lib/data";
 import { slugify } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 // Configure fonts
 const inter = Inter({
@@ -34,15 +36,34 @@ function RootLayoutContent({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await fetch("https://getprojects-ie4kq7otea-uc.a.run.app");
-        if (!res.ok) return;
-        const projects = await res.json();
-        const uniqueCats = Array.from(new Set(projects.map((p: any) => p.category))) as string[];
+        const querySnapshot = await getDocs(collection(db, "projects"));
+        const projects = querySnapshot.docs.map(doc => doc.data());
 
-        setCategories(uniqueCats.map(cat => ({
-          label: cat,
-          href: `/${slugify(cat)}`
-        })));
+        // Extract and normalize categories
+        const normalizedCategories = new Set<string>();
+        const categoryMap = new Map<string, string>(); // slug -> original label
+
+        projects.forEach((p: any) => {
+          if (p.category) {
+            const normalized = p.category.trim().toLowerCase();
+            if (!normalizedCategories.has(normalized)) {
+              normalizedCategories.add(normalized);
+              const slug = slugify(p.category);
+              // Store the first occurrence's formatting as the label, but keyed by unique slug/normalized value to avoid dups
+              if (!categoryMap.has(slug)) {
+                categoryMap.set(slug, p.category.trim());
+              }
+            }
+          }
+        });
+
+        // Convert map to array
+        const uniqueCategories = Array.from(categoryMap.entries()).map(([slug, label]) => ({
+          label: label,
+          href: `/${slug}`
+        })).sort((a, b) => a.label.localeCompare(b.label));
+
+        setCategories(uniqueCategories);
       } catch (error) {
         console.error("Failed to fetch categories:", error);
       }

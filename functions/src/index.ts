@@ -26,7 +26,17 @@ export const getProjects = functions.onRequest(async (req, res) => {
 
 // POST /api/projects - Create project
 export const createProject = functions.onRequest(async (req, res) => {
+    // CORS headers
     res.set('Access-Control-Allow-Origin', '*');
+    res.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.set('Access-Control-Allow-Headers', 'Content-Type');
+
+    // Handle preflight
+    if (req.method === 'OPTIONS') {
+        res.status(204).send('');
+        return;
+    }
+
     if (req.method !== "POST") {
         res.status(405).json({ error: "Method not allowed" });
         return;
@@ -57,7 +67,17 @@ export const createProject = functions.onRequest(async (req, res) => {
 
 // PUT /api/projects/:slug - Update project
 export const updateProject = functions.onRequest(async (req, res) => {
+    // CORS headers
     res.set('Access-Control-Allow-Origin', '*');
+    res.set('Access-Control-Allow-Methods', 'PUT, OPTIONS');
+    res.set('Access-Control-Allow-Headers', 'Content-Type');
+
+    // Handle preflight
+    if (req.method === 'OPTIONS') {
+        res.status(204).send('');
+        return;
+    }
+
     if (req.method !== "PUT") {
         res.status(405).json({ error: "Method not allowed" });
         return;
@@ -96,7 +116,17 @@ export const updateProject = functions.onRequest(async (req, res) => {
 
 // DELETE /api/projects/:slug - Delete project
 export const deleteProject = functions.onRequest(async (req, res) => {
+    // CORS headers
     res.set('Access-Control-Allow-Origin', '*');
+    res.set('Access-Control-Allow-Methods', 'DELETE, OPTIONS');
+    res.set('Access-Control-Allow-Headers', 'Content-Type');
+
+    // Handle preflight
+    if (req.method === 'OPTIONS') {
+        res.status(204).send('');
+        return;
+    }
+
     if (req.method !== "DELETE") {
         res.status(405).json({ error: "Method not allowed" });
         return;
@@ -148,7 +178,17 @@ export const getSettings = functions.onRequest(async (req, res) => {
 
 // POST /api/settings - Update settings
 export const updateSettings = functions.onRequest(async (req, res) => {
+    // CORS headers
     res.set('Access-Control-Allow-Origin', '*');
+    res.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.set('Access-Control-Allow-Headers', 'Content-Type');
+
+    // Handle preflight
+    if (req.method === 'OPTIONS') {
+        res.status(204).send('');
+        return;
+    }
+
     if (req.method !== "POST") {
         res.status(405).json({ error: "Method not allowed" });
         return;

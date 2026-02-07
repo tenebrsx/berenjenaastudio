@@ -1,36 +1,35 @@
-import { PROJECTS } from "@/lib/data";
-import ProjectCard from "@/components/ProjectCard";
-import { notFound } from "next/navigation";
+import CategoryClient from "./CategoryClient";
 
-export function generateStaticParams() {
-    const categories = [...new Set(PROJECTS.map(p => p.category))];
-    return categories.map((category) => ({
-        category,
-    }));
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import { slugify } from "@/lib/utils";
+
+export async function generateStaticParams() {
+    try {
+        const querySnapshot = await getDocs(collection(db, "projects"));
+        const categories = new Set<string>();
+
+        querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            if (data.category) {
+                categories.add(slugify(data.category));
+            }
+        });
+
+        // Always include default categories even if not in DB yet, to be safe
+        const defaultCategories = ["commercial", "music-video", "narrative", "spec"];
+        defaultCategories.forEach(c => categories.add(c));
+
+        return Array.from(categories).map((category) => ({
+            category,
+        }));
+    } catch (error) {
+        console.error("Error generating static params:", error);
+        return [];
+    }
 }
 
-export default function CategoryPage({ params }: { params: { category: string } }) {
-    const { category } = params;
-
-    const categoryProjects = PROJECTS.filter(p => p.category === category);
-
-    if (categoryProjects.length === 0) {
-        notFound();
-    }
-
-    return (
-        <main className="min-h-screen pt-32 pb-20 px-4 md:px-10 bg-black">
-            <div className="max-w-[1920px] mx-auto">
-                <h1 className="text-4xl md:text-6xl font-sans font-bold uppercase mb-20 text-white">
-                    {category}
-                </h1>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {categoryProjects.map((project) => (
-                        <ProjectCard key={project.id} project={project} />
-                    ))}
-                </div>
-            </div>
-        </main>
-    );
+export default async function CategoryPage({ params }: { params: Promise<{ category: string }> }) {
+    const resolvedParams = await params;
+    return <CategoryClient category={resolvedParams.category} />;
 }

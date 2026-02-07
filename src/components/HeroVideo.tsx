@@ -13,17 +13,24 @@ export default function HeroVideo({ videoUrl }: HeroVideoProps) {
             {/* Overlay Gradient for Text Readability */}
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent z-10" />
 
-            <video
-                key={src}
-                autoPlay
-                muted
-                loop
-                playsInline
-                className="w-full h-full object-cover opacity-60"
-            >
-                {/* Fallback/Placeholder: A neon/rain cinematic clip */}
-                <source src={src} type="video/mp4" />
-            </video>
+            {src.toLowerCase().endsWith(".gif") ? (
+                <img
+                    src={src}
+                    alt="Hero Background"
+                    className="w-full h-full object-cover opacity-60"
+                />
+            ) : (
+                <video
+                    key={src}
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    className="w-full h-full object-cover opacity-60"
+                >
+                    <source src={src} type="video/mp4" />
+                </video>
+            )}
 
             {/* Scroll Indicator */}
             <motion.div

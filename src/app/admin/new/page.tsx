@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 import AdminLayout from "@/components/admin/AdminLayout";
 import ProtectedRoute from "@/components/admin/ProtectedRoute";
 import { Button } from "@/components/ui/button";
@@ -13,6 +15,7 @@ import { ArrowLeft, Loader2, Check, Smartphone, Monitor, Plus, X, Image as Image
 import { slugify } from "@/lib/utils";
 import { motion } from "framer-motion";
 import ImageUpload from "@/components/admin/ImageUpload";
+import MultiImageUpload from "@/components/admin/MultiImageUpload";
 
 export default function NewProjectPage() {
     const [loading, setLoading] = useState(false);
@@ -40,31 +43,27 @@ export default function NewProjectPage() {
         setLoading(true);
 
         try {
-            const res = await fetch("https://createproject-ie4kq7otea-uc.a.run.app", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData),
+            await addDoc(collection(db, "projects"), {
+                ...formData,
+                createdAt: serverTimestamp(),
+                updatedAt: serverTimestamp(),
             });
 
-            if (res.ok) {
-                router.push("/admin");
-            } else {
-                alert("Error creating project");
-            }
+            router.push("/admin");
         } catch (error) {
-            console.error("Error:", error);
+            console.error("Error creating project:", error);
             alert("Error creating project");
         } finally {
             setLoading(false);
         }
     };
 
-    // Add gallery image
-    const addGalleryImage = (url: string) => {
-        if (!url) return;
+    // Add gallery images
+    const addGalleryImages = (urls: string[]) => {
+        if (!urls.length) return;
         setFormData(prev => ({
             ...prev,
-            gallery: [...(prev.gallery || []), url]
+            gallery: [...(prev.gallery || []), ...urls]
         }));
     };
 
@@ -146,9 +145,9 @@ export default function NewProjectPage() {
                                     <div className="space-y-2">
                                         <Label className="text-zinc-300">Imágenes de la Galería</Label>
 
-                                        <ImageUpload
-                                            onChange={addGalleryImage}
-                                            label="Añadir Imagen"
+                                        <MultiImageUpload
+                                            onUpload={addGalleryImages}
+                                            label="Arrastra imágenes aquí o haz click"
                                             folder="gallery"
                                         />
 

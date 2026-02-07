@@ -2,6 +2,11 @@
 
 import { useEffect, useState, Suspense } from "react";
 import { notFound, useSearchParams } from "next/navigation";
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import { motion, AnimatePresence } from "framer-motion";
+import { X } from "lucide-react";
+import RelatedProjects from "@/components/RelatedProjects";
 
 interface Project {
     id: string;
@@ -23,6 +28,7 @@ function ProjectViewer() {
     const slug = searchParams.get("slug");
     const [project, setProject] = useState<Project | null>(null);
     const [loading, setLoading] = useState(true);
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
     useEffect(() => {
         if (slug) {
@@ -35,18 +41,15 @@ function ProjectViewer() {
     const fetchProject = async (slugToFind: string) => {
         setLoading(true);
         try {
-            const res = await fetch("https://getprojects-ie4kq7otea-uc.a.run.app");
-            if (!res.ok) {
-                console.error("Failed to fetch projects");
+            const q = query(collection(db, "projects"), where("slug", "==", slugToFind));
+            const querySnapshot = await getDocs(q);
+
+            if (querySnapshot.empty) {
+                notFound();
                 return;
             }
-            const projects = await res.json();
-            const found = projects.find((p: Project) => p.slug === slugToFind);
 
-            if (!found) {
-                notFound();
-            }
-
+            const found = { id: querySnapshot.docs[0].id, ...querySnapshot.docs[0].data() } as Project;
             setProject(found);
         } catch (error) {
             console.error("Error fetching project:", error);
@@ -91,41 +94,44 @@ function ProjectViewer() {
                 </div>
 
                 {/* YouTube Video (if available) */}
-                {project.videoUrl && (() => {
-                    // Extract YouTube video ID from various URL formats
+                {/* Media Section: Video or Thumbnail */}
+                {(() => {
                     const getYouTubeId = (url: string) => {
                         const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
                         const match = url.match(regExp);
                         return (match && match[2].length === 11) ? match[2] : null;
                     };
 
-                    const videoId = getYouTubeId(project.videoUrl);
+                    const videoId = project.videoUrl ? getYouTubeId(project.videoUrl) : null;
 
-                    return videoId ? (
-                        <div className="mb-20">
-                            <div className="aspect-video bg-zinc-900 rounded-sm overflow-hidden">
-                                <iframe
-                                    width="100%"
-                                    height="100%"
-                                    src={`https://www.youtube.com/embed/${videoId}`}
-                                    title={project.title}
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                    allowFullScreen
-                                    className="w-full h-full"
-                                />
+                    if (videoId) {
+                        return (
+                            <div className="mb-20">
+                                <div className="aspect-video bg-zinc-900 rounded-sm overflow-hidden">
+                                    <iframe
+                                        width="100%"
+                                        height="100%"
+                                        src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}`}
+                                        title={project.title}
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowFullScreen
+                                        className="w-full h-full"
+                                    />
+                                </div>
                             </div>
-                        </div>
-                    ) : null;
-                })()}
+                        );
+                    }
 
-                {/* Project Thumbnail */}
-                <div className="mb-20 aspect-video bg-zinc-900 rounded-sm overflow-hidden">
-                    <img
-                        src={project.thumbnail}
-                        alt={project.title}
-                        className="w-full h-full object-cover"
-                    />
-                </div>
+                    return (
+                        <div className="mb-20 aspect-video bg-zinc-900 rounded-sm overflow-hidden">
+                            <img
+                                src={project.thumbnail}
+                                alt={project.title}
+                                className="w-full h-full object-cover"
+                            />
+                        </div>
+                    );
+                })()}
 
                 {/* Project Description */}
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
@@ -162,9 +168,13 @@ function ProjectViewer() {
                             <span className="h-px flex-1 bg-zinc-900" />
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {project.gallery.map((image, index) => (
-                                <div key={index} className="group relative aspect-[4/5] bg-zinc-900 overflow-hidden rounded-sm hover:-translate-y-2 transition-transform duration-500 ease-out">
+                                <div
+                                    key={index}
+                                    className="group relative aspect-video bg-zinc-900 overflow-hidden rounded-sm hover:-translate-y-2 transition-transform duration-500 ease-out cursor-pointer"
+                                    onClick={() => setSelectedImage(image)}
+                                >
                                     <img
                                         src={image}
                                         alt={`${project.title} gallery ${index + 1}`}
@@ -176,6 +186,39 @@ function ProjectViewer() {
                         </div>
                     </div>
                 )}
+
+                {/* Lightbox Overlay */}
+                <AnimatePresence>
+                    {selectedImage && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setSelectedImage(null)}
+                            className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 backdrop-blur-sm"
+                        >
+                            <button
+                                onClick={() => setSelectedImage(null)}
+                                className="absolute top-6 right-6 text-white/50 hover:text-white transition-colors"
+                            >
+                                <X size={32} />
+                            </button>
+                            <motion.img
+                                src={selectedImage}
+                                alt="Gallery View"
+                                initial={{ scale: 0.9, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                exit={{ scale: 0.9, opacity: 0 }}
+                                transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                                className="max-w-full max-h-[90vh] object-contain rounded-sm shadow-2xl"
+                                onClick={(e) => e.stopPropagation()}
+                            />
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                {/* Related Projects */}
+                <RelatedProjects currentProjectId={project.id} />
             </div>
         </main>
     );

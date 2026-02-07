@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 interface Project {
     id: string;
@@ -26,8 +28,11 @@ export default function GalleryPage() {
 
     const fetchData = async () => {
         try {
-            const res = await fetch("https://getprojects-ie4kq7otea-uc.a.run.app");
-            const projects: Project[] = await res.json();
+            const querySnapshot = await getDocs(collection(db, "projects"));
+            const projects = querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            })) as Project[];
 
             // Flatten all gallery images
             const allImages: GalleryImage[] = [];

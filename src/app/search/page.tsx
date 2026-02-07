@@ -1,13 +1,45 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ProjectCard from "@/components/ProjectCard";
-import { PROJECTS } from "@/lib/data";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+
+interface Project {
+    id: string;
+    title: string;
+    slug: string;
+    category: string;
+    year: string;
+    thumbnail: string;
+    description?: string;
+}
 
 export default function SearchPage() {
     const [query, setQuery] = useState("");
+    const [projects, setProjects] = useState<Project[]>([]);
+    const [loading, setLoading] = useState(true);
 
-    const filteredProjects = PROJECTS.filter((project) =>
+    useEffect(() => {
+        fetchProjects();
+    }, []);
+
+    const fetchProjects = async () => {
+        try {
+            const querySnapshot = await getDocs(collection(db, "projects"));
+            const projectsData = querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            })) as Project[];
+            setProjects(projectsData);
+        } catch (error) {
+            console.error("Error fetching projects:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const filteredProjects = projects.filter((project) =>
         project.title.toLowerCase().includes(query.toLowerCase()) ||
         project.description?.toLowerCase().includes(query.toLowerCase()) ||
         project.category.toLowerCase().includes(query.toLowerCase())

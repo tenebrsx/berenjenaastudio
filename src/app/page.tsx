@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { collection, getDocs, doc, getDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 import ProjectGrid from "@/components/ProjectGrid";
 import HeroVideo from "@/components/HeroVideo";
 
@@ -30,15 +32,17 @@ export default function Home() {
   const fetchData = async () => {
     try {
       // Fetch projects
-      const projectsRes = await fetch("https://getprojects-ie4kq7otea-uc.a.run.app");
-      const projectsData = await projectsRes.json();
+      const projectsSnap = await getDocs(collection(db, "projects"));
+      const projectsData = projectsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Project[];
       setProjects(projectsData);
 
       // Fetch settings (for hero video URL)
-      const settingsRes = await fetch("https://getsettings-ie4kq7otea-uc.a.run.app");
-      const settingsData = await settingsRes.json();
-      if (settingsData.heroVideoUrl) {
-        setVideoUrl(settingsData.heroVideoUrl);
+      const settingsSnap = await getDoc(doc(db, "settings", "general"));
+      if (settingsSnap.exists()) {
+        const settingsData = settingsSnap.data();
+        if (settingsData.heroVideoUrl) {
+          setVideoUrl(settingsData.heroVideoUrl);
+        }
       }
     } catch (error) {
       console.error("Error fetching data:", error);

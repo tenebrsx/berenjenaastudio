@@ -3,6 +3,8 @@
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { doc, getDoc, updateDoc, serverTimestamp } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 import AdminLayout from "@/components/admin/AdminLayout";
 import ProtectedRoute from "@/components/admin/ProtectedRoute";
 import { Button } from "@/components/ui/button";
@@ -10,8 +12,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, Loader2, Check, Smartphone, Monitor, X, Image as ImageIcon, Plus } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, Reorder } from "framer-motion";
 import ImageUpload from "@/components/admin/ImageUpload";
+import MultiImageUpload from "@/components/admin/MultiImageUpload";
 
 interface Project {
     id: string;
@@ -56,12 +59,13 @@ function EditContent() {
     }, [projectId]);
 
     const fetchProject = async () => {
+        if (!projectId) return;
         try {
-            const res = await fetch("https://getprojects-ie4kq7otea-uc.a.run.app");
-            const projects: Project[] = await res.json();
-            const found = projects.find(p => p.id === projectId);
+            const docRef = doc(db, "projects", projectId);
+            const docSnap = await getDoc(docRef);
 
-            if (found) {
+            if (docSnap.exists()) {
+                const found = { id: docSnap.id, ...docSnap.data() } as Project;
                 setProject(found);
                 setFormData({
                     title: found.title,
@@ -73,6 +77,8 @@ function EditContent() {
                     credits: found.credits || [],
                     gallery: found.gallery || [],
                 });
+            } else {
+                console.error("No such project!");
             }
         } catch (error) {
             console.error("Error fetching project:", error);
@@ -81,12 +87,12 @@ function EditContent() {
         }
     };
 
-    // Add gallery image
-    const addGalleryImage = (url: string) => {
-        if (!url) return;
+    // Add gallery images
+    const addGalleryImages = (urls: string[]) => {
+        if (!urls.length) return;
         setFormData(prev => ({
             ...prev,
-            gallery: [...(prev.gallery || []), url]
+            gallery: [...(prev.gallery || []), ...urls]
         }));
     };
 
@@ -123,23 +129,19 @@ function EditContent() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!project) return;
+        if (!project || !projectId) return;
         setLoading(true);
 
         try {
-            const res = await fetch("https://updateproject-ie4kq7otea-uc.a.run.app", {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ ...formData }),
+            const docRef = doc(db, "projects", projectId);
+            await updateDoc(docRef, {
+                ...formData,
+                updatedAt: serverTimestamp(),
             });
 
-            if (res.ok) {
-                router.push("/admin");
-            } else {
-                alert("Error updating project");
-            }
+            router.push("/admin");
         } catch (error) {
-            console.error("Error:", error);
+            console.error("Error updating project:", error);
             alert("Error updating project");
         } finally {
             setLoading(false);
@@ -253,31 +255,45 @@ function EditContent() {
                                     <div className="space-y-2">
                                         <Label className="text-zinc-300">Imágenes de la Galería</Label>
 
-                                        <ImageUpload
-                                            onChange={addGalleryImage}
-                                            label="Añadir Imagen"
+                                        <MultiImageUpload
+                                            onUpload={addGalleryImages}
+                                            label="Arrastra imágenes aquí o haz click"
                                             folder="gallery"
                                         />
 
-                                        {/* Gallery List */}
                                         <div className="space-y-2 mt-4">
-                                            {formData.gallery?.map((url, idx) => (
-                                                <div key={idx} className="flex items-center gap-2 p-2 bg-zinc-900 rounded border border-zinc-800 group">
-                                                    <div className="h-10 w-16 bg-zinc-800 rounded overflow-hidden shrink-0 relative">
-                                                        <img src={url} alt="" className="h-full w-full object-cover" />
-                                                    </div>
-                                                    <div className="flex-1 min-w-0">
-                                                        <p className="text-xs text-zinc-500 truncate">{url.split('/').pop()?.split('?')[0] || url}</p>
-                                                    </div>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => removeGalleryImage(idx)}
-                                                        className="p-1.5 hover:bg-red-500/10 hover:text-red-400 text-zinc-500 transition-colors rounded"
+                                            <Reorder.Group
+                                                axis="y"
+                                                values={formData.gallery || []}
+                                                onReorder={(newOrder: string[]) => setFormData(prev => ({ ...prev, gallery: newOrder }))}
+                                                className="space-y-2"
+                                            >
+                                                {formData.gallery?.map((url, idx) => (
+                                                    <Reorder.Item
+                                                        key={url}
+                                                        value={url}
+                                                        className="flex items-center gap-2 p-2 bg-zinc-900 rounded border border-zinc-800 group cursor-grab active:cursor-grabbing"
                                                     >
-                                                        <X className="h-4 w-4" />
-                                                    </button>
-                                                </div>
-                                            ))}
+                                                        <div className="h-10 w-16 bg-zinc-800 rounded overflow-hidden shrink-0 relative">
+                                                            <img src={url} alt="" className="h-full w-full object-cover" />
+                                                        </div>
+                                                        <div className="flex-1 min-w-0">
+                                                            <p className="text-xs text-zinc-500 truncate">{url.split('/').pop()?.split('?')[0] || url}</p>
+                                                        </div>
+                                                        <button
+                                                            type="button"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation(); // Prevent drag start interference if clicked
+                                                                removeGalleryImage(idx);
+                                                            }}
+                                                            className="p-1.5 hover:bg-red-500/10 hover:text-red-400 text-zinc-500 transition-colors rounded"
+                                                        >
+                                                            <X className="h-4 w-4" />
+                                                        </button>
+                                                    </Reorder.Item>
+                                                ))}
+                                            </Reorder.Group>
+
                                             {(!formData.gallery || formData.gallery.length === 0) && (
                                                 <p className="text-xs text-zinc-500 italic text-center py-4 border border-zinc-800 border-dashed rounded">
                                                     Aún no hay imágenes en la galería

@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 import ProjectGrid from "@/components/ProjectGrid";
 
 interface Project {
@@ -27,8 +29,11 @@ export default function WorkPage() {
 
     const fetchData = async () => {
         try {
-            const res = await fetch("https://getprojects-ie4kq7otea-uc.a.run.app");
-            const data = await res.json();
+            const querySnapshot = await getDocs(collection(db, "projects"));
+            const data = querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            })) as Project[];
             setProjects(data);
         } catch (error) {
             console.error("Error fetching projects:", error);

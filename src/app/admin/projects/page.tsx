@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { collection, getDocs, doc, deleteDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 import AdminLayout from "@/components/admin/AdminLayout";
 import ProtectedRoute from "@/components/admin/ProtectedRoute";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -47,8 +49,11 @@ export default function ProjectsPage() {
 
     const fetchProjects = async () => {
         try {
-            const res = await fetch("https://getprojects-ie4kq7otea-uc.a.run.app");
-            const data = await res.json();
+            const querySnapshot = await getDocs(collection(db, "projects"));
+            const data = querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            })) as Project[];
             setProjects(data);
         } catch (error) {
             console.error("Error fetching projects:", error);
@@ -57,21 +62,14 @@ export default function ProjectsPage() {
         }
     };
 
-    const handleDelete = async (slug: string) => {
+    const handleDelete = async (id: string) => {
         if (!confirm("¿Estás seguro de que quieres eliminar este proyecto?")) {
             return;
         }
 
         try {
-            const res = await fetch("https://deleteproject-ie4kq7otea-uc.a.run.app", {
-                method: "DELETE",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ slug }),
-            });
-
-            if (res.ok) {
-                fetchProjects();
-            }
+            await deleteDoc(doc(db, "projects", id));
+            fetchProjects();
         } catch (error) {
             console.error("Error deleting project:", error);
         }
@@ -208,12 +206,16 @@ export default function ProjectsPage() {
                         {filteredProjects.map((project) => (
                             <Card key={project.id} className="overflow-hidden group hover:shadow-lg transition-shadow bg-zinc-900/50 border-white/5">
                                 {/* Thumbnail */}
-                                <div className="aspect-video bg-zinc-800/50 overflow-hidden relative">
-                                    <img
-                                        src={project.thumbnail}
-                                        alt={project.title}
-                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-                                    />
+                                <div className="aspect-video bg-zinc-800/50 overflow-hidden relative flex items-center justify-center">
+                                    {project.thumbnail ? (
+                                        <img
+                                            src={project.thumbnail}
+                                            alt={project.title}
+                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                                        />
+                                    ) : (
+                                        <Film className="h-8 w-8 text-zinc-600" />
+                                    )}
                                 </div>
 
                                 {/* Content */}
@@ -252,7 +254,7 @@ export default function ProjectsPage() {
                                     <Button
                                         variant="outline"
                                         size="sm"
-                                        onClick={() => handleDelete(project.slug)}
+                                        onClick={() => handleDelete(project.id)}
                                         className="gap-1.5 text-red-600 hover:bg-red-50 hover:text-red-700 hover:border-red-200 text-xs"
                                     >
                                         <Trash2 className="h-3 w-3" />
@@ -269,12 +271,16 @@ export default function ProjectsPage() {
                                 <CardContent className="p-4">
                                     <div className="flex items-center gap-4">
                                         {/* Thumbnail */}
-                                        <div className="w-32 h-20 bg-zinc-800 rounded overflow-hidden flex-shrink-0">
-                                            <img
-                                                src={project.thumbnail}
-                                                alt={project.title}
-                                                className="w-full h-full object-cover"
-                                            />
+                                        <div className="w-32 h-20 bg-zinc-800 rounded overflow-hidden flex-shrink-0 flex items-center justify-center">
+                                            {project.thumbnail ? (
+                                                <img
+                                                    src={project.thumbnail}
+                                                    alt={project.title}
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            ) : (
+                                                <Film className="h-6 w-6 text-zinc-600" />
+                                            )}
                                         </div>
 
                                         {/* Info */}
@@ -313,7 +319,7 @@ export default function ProjectsPage() {
                                                     <Button
                                                         variant="outline"
                                                         size="sm"
-                                                        onClick={() => handleDelete(project.slug)}
+                                                        onClick={() => handleDelete(project.id)}
                                                         className="gap-1.5 text-red-600 hover:bg-red-50 hover:text-red-700 hover:border-red-200 text-xs"
                                                     >
                                                         <Trash2 className="h-3 w-3" />
