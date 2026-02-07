@@ -60,7 +60,7 @@ function ProjectViewer() {
 
     if (loading) {
         return (
-            <main className="min-h-screen pt-32 pb-20 px-4 md:px-10 bg-black text-white">
+            <main className="min-h-screen pt-40 pb-20 px-4 md:px-10 bg-black text-white">
                 <div className="max-w-[1400px] mx-auto">
                     <div className="mb-20">
                         <div className="h-16 bg-zinc-800 animate-pulse rounded mb-6" />
@@ -81,7 +81,7 @@ function ProjectViewer() {
     }
 
     return (
-        <main className="min-h-screen pt-32 pb-20 px-4 md:px-10 bg-black text-white">
+        <main className="min-h-screen pt-40 pb-20 px-4 md:px-10 bg-black text-white">
             <div className="max-w-[1400px] mx-auto">
                 {/* Project Header */}
                 <div className="mb-20">
@@ -164,7 +164,7 @@ function ProjectViewer() {
                     <div className="mt-32 space-y-10">
                         <div className="flex items-center gap-4">
                             <span className="h-px flex-1 bg-zinc-900" />
-                            <h3 className="font-mono text-xs uppercase text-zinc-500 tracking-widest">Gallery & Moments</h3>
+                            <h3 className="font-mono text-xs uppercase text-zinc-500 tracking-widest">Galería y Momentos</h3>
                             <span className="h-px flex-1 bg-zinc-900" />
                         </div>
 

@@ -49,7 +49,7 @@ export default function CategoryClient({ category }: { category: string }) {
         .join(" ");
 
     return (
-        <main className="min-h-screen pt-32 pb-20 px-4 md:px-10 bg-black">
+        <main className="min-h-screen pt-40 pb-20 px-4 md:px-10 bg-black">
             <div className="max-w-[1920px] mx-auto">
                 <h1 className="text-4xl md:text-6xl font-sans font-bold uppercase mb-20 text-white">
                     {categoryTitle}

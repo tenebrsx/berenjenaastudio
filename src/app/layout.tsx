@@ -103,6 +103,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${inter.variable} ${robotoMono.variable} antialiased bg-background text-foreground overflow-x-hidden`}
+        suppressHydrationWarning
       >
         <RootLayoutContent>{children}</RootLayoutContent>
       </body>

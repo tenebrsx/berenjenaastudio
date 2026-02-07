@@ -46,7 +46,7 @@ export default function SearchPage() {
     );
 
     return (
-        <main className="min-h-screen pt-32 pb-20 px-4 md:px-10 bg-black text-white">
+        <main className="min-h-screen pt-40 pb-20 px-4 md:px-10 bg-black text-white">
             <div className="max-w-[1920px] mx-auto">
                 {/* Search Header */}
                 <div className="mb-20">

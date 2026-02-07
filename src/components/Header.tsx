@@ -28,8 +28,8 @@ export default function Header({ categories = [] }: HeaderProps) {
 
     // Combine dynamic categories with static links
     const staticLinks = [
-        { href: "/gallery", label: "GALLERY" },
-        { href: "/work", label: "WORK" },
+        { href: "/gallery", label: "GALERÍA" },
+        { href: "/work", label: "TRABAJOS" },
         { href: "/search", label: "BUSCAR" },
         { href: "/index", label: "ÍNDICE" },
         { href: "/about", label: "INFO" },
@@ -62,7 +62,7 @@ export default function Header({ categories = [] }: HeaderProps) {
                     onMouseEnter={handleMouseEnter}
                     onMouseLeave={handleMouseLeave}
                 >
-                    {isMenuOpen ? "CLOSE" : "MENU"}
+                    {isMenuOpen ? "CERRAR" : "MENÚ"}
                 </button>
 
                 {/* Logo */}
