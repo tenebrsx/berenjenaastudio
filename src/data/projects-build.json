@@ -17,10 +17,10 @@
       "_seconds": 1770948183,
       "_nanoseconds": 39000000
     },
-    "thumbnail": "https://firebasestorage.googleapis.com/v0/b/berenjenastudiofinal.firebasestorage.app/o/thumbnails%2F1770948612009-ekibol.gif?alt=media&token=601cbf45-f1ba-40cb-aae7-8b6e7288bfd5",
+    "thumbnail": "https://firebasestorage.googleapis.com/v0/b/berenjenastudiofinal.firebasestorage.app/o/thumbnails%2F1770948958285-0212.mp4?alt=media&token=ac12eaf5-101e-4090-b654-eb89fe5b21b2",
     "updatedAt": {
-      "_seconds": 1770948699,
-      "_nanoseconds": 527000000
+      "_seconds": 1770948988,
+      "_nanoseconds": 296000000
     }
   },
   {
@@ -29,7 +29,6 @@
     "slug": "COMERCIAL",
     "description": "",
     "category": "comercial",
-    "thumbnail": "https://firebasestorage.googleapis.com/v0/b/berenjenastudiofinal.firebasestorage.app/o/thumbnails%2F1770942210541-0212(1).gif?alt=media&token=6cd24d17-449f-4410-b735-0315f76e467d",
     "videoUrl": "https://vimeo.com/1164537507?share=copy&fl=sv&fe=ci",
     "credits": [],
     "createdAt": {
@@ -42,9 +41,10 @@
       "https://firebasestorage.googleapis.com/v0/b/berenjenastudiofinal.firebasestorage.app/o/gallery%2F1770942251709-Un%20comercial%20que%20tardo%CC%81%20menos%20de%204%20horas%20en%20grabarse-%20%C2%A1Beren%2C%20grabemos%20esto%20ra%CC%81pido!%20%F0%9F%A4%A3.%23comercial%20(1).jpg?alt=media&token=7530d16b-0ba9-4209-ab1e-7040e43248ec",
       "https://firebasestorage.googleapis.com/v0/b/berenjenastudiofinal.firebasestorage.app/o/gallery%2F1770942251709-Un%20comercial%20que%20tardo%CC%81%20menos%20de%204%20horas%20en%20grabarse-%20%C2%A1Beren%2C%20grabemos%20esto%20ra%CC%81pido!%20%F0%9F%A4%A3.%23comercial%20(3).jpg?alt=media&token=92594147-a89d-4d74-8e01-8dece4e1cf2a"
     ],
+    "thumbnail": "https://firebasestorage.googleapis.com/v0/b/berenjenastudiofinal.firebasestorage.app/o/thumbnails%2F1770948867042-0212(1).mp4?alt=media&token=26f58387-2c60-45e6-9c4f-a2383fad57a1",
     "updatedAt": {
-      "_seconds": 1770947419,
-      "_nanoseconds": 381000000
+      "_seconds": 1770948893,
+      "_nanoseconds": 135000000
     }
   },
   {
@@ -52,7 +52,6 @@
     "slug": "berenjenaxekibol",
     "description": "",
     "category": "Cortometraje",
-    "thumbnail": "https://firebasestorage.googleapis.com/v0/b/berenjenastudiofinal.firebasestorage.app/o/thumbnails%2F1770940956995-0212.gif?alt=media&token=a77daf81-5471-4868-abb3-3258cd692b1e",
     "videoUrl": "https://vimeo.com/1163682165?fl=ip&fe=ec",
     "credits": [
       {
@@ -79,9 +78,10 @@
       "https://firebasestorage.googleapis.com/v0/b/berenjenastudiofinal.firebasestorage.app/o/gallery%2F1770941552141-Screenshot%202026-02-12%20at%208.10.33%E2%80%AFPM.png?alt=media&token=60636a79-6de5-4961-ba65-b6825c5f7acb",
       "https://firebasestorage.googleapis.com/v0/b/berenjenastudiofinal.firebasestorage.app/o/gallery%2F1770941713809-Screenshot%202026-02-12%20at%208.15.09%E2%80%AFPM.png?alt=media&token=4baf6a05-4178-44d1-9674-24df349614bd"
     ],
+    "thumbnail": "https://firebasestorage.googleapis.com/v0/b/berenjenastudiofinal.firebasestorage.app/o/thumbnails%2F1770949004613-0212.mp4?alt=media&token=4184b779-ebaf-4071-890e-31ae4be2881f",
     "updatedAt": {
-      "_seconds": 1770941723,
-      "_nanoseconds": 683000000
+      "_seconds": 1770949023,
+      "_nanoseconds": 879000000
     }
   }
 ]

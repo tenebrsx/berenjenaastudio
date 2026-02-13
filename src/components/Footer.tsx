@@ -17,7 +17,7 @@ export default function Footer() {
 
                 <div className="flex gap-6 font-mono text-xs uppercase">
                     <Link
-                        href="https://instagram.com"
+                        href="https://www.instagram.com/berenjena.___/"
                         target="_blank"
                         className="hover:text-accent transition-colors"
                         onMouseEnter={handleMouseEnter}
@@ -26,13 +26,13 @@ export default function Footer() {
                         Instagram
                     </Link>
                     <Link
-                        href="https://vimeo.com"
+                        href="https://www.youtube.com/@berenjenastudios"
                         target="_blank"
                         className="hover:text-accent transition-colors"
                         onMouseEnter={handleMouseEnter}
                         onMouseLeave={handleMouseLeave}
                     >
-                        Vimeo
+                        YouTube
                     </Link>
                     <Link
                         href="mailto:hola@berejenastudio.com"
