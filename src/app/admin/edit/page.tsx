@@ -251,6 +251,7 @@ function EditContent() {
                                             <MediaUpload
                                                 value={formData.thumbnail}
                                                 onChange={(url) => setFormData(prev => ({ ...prev, thumbnail: url }))}
+                                                onPosterGenerated={(url) => setFormData(prev => ({ ...prev, thumbnailPoster: url }))}
                                                 folder="thumbnails"
                                                 label="Subir Thumbnail (MP4, GIF, JPG)"
                                             />

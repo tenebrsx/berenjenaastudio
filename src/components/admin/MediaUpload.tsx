@@ -15,6 +15,7 @@ interface MediaUploadProps {
     label?: string;
     className?: string;
     folder?: string;
+    onPosterGenerated?: (url: string) => void;
 }
 
 export default function MediaUpload({
@@ -23,11 +24,78 @@ export default function MediaUpload({
     onRemove,
     label = "Subir Video/GIF (MP4, GIF)",
     className,
-    folder = "settings"
+    folder = "settings",
+    onPosterGenerated
 }: MediaUploadProps) {
     const [loading, setLoading] = useState(false);
+    const [generatingPoster, setGeneratingPoster] = useState(false);
     const [progress, setProgress] = useState(0);
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const generateVideoPoster = async (file: File) => {
+        if (!onPosterGenerated) return;
+
+        try {
+            setGeneratingPoster(true);
+            console.log("Generating poster for:", file.name);
+
+            const video = document.createElement("video");
+            video.preload = "metadata";
+            video.muted = true;
+            video.playsInline = true;
+
+            // Create a URL for the video file
+            const fileURL = URL.createObjectURL(file);
+            video.src = fileURL;
+
+            // Wait for metadata to load to get dimensions
+            await new Promise((resolve, reject) => {
+                video.onloadedmetadata = () => {
+                    // Seek to 1st frame (0.1s ensures we don't get a black frame if 0.0 is empty)
+                    video.currentTime = 0.1;
+                };
+                video.onseeked = () => resolve(true);
+                video.onerror = (e) => reject(e);
+            });
+
+            // Create canvas and draw frame
+            const canvas = document.createElement("canvas");
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext("2d");
+            if (!ctx) throw new Error("Could not get canvas context");
+
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // Convert to blob (JPG for smaller size)
+            const blob = await new Promise<Blob | null>(resolve =>
+                canvas.toBlob(resolve, "image/jpeg", 0.85)
+            );
+
+            if (!blob) throw new Error("Could not create blob from canvas");
+
+            // Upload poster
+            const posterName = `poster-${Date.now()}.jpg`;
+            const storageRef = ref(storage, `${folder}/${posterName}`);
+
+            // Upload without resumption for small poster
+            const snapshot = await uploadBytesResumable(storageRef, blob);
+            const downloadURL = await getDownloadURL(snapshot.ref);
+
+            console.log("Poster generated and uploaded:", downloadURL);
+            onPosterGenerated(downloadURL);
+
+            // Cleanup
+            URL.revokeObjectURL(fileURL);
+            video.remove();
+            canvas.remove();
+
+        } catch (error) {
+            console.error("Error generating poster:", error);
+        } finally {
+            setGeneratingPoster(false);
+        }
+    };
 
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -62,6 +130,9 @@ export default function MediaUpload({
                 } catch (error) {
                     console.error("Compression failed, uploading original:", error);
                 }
+            } else if (file.type.startsWith("video/")) {
+                // If it's a video, generate a poster in parallel
+                generateVideoPoster(file);
             }
 
             // Create reference
@@ -150,6 +221,11 @@ export default function MediaUpload({
                             <span className="text-xs text-zinc-500 font-mono">
                                 {Math.round(progress)}%
                             </span>
+                            {generatingPoster && (
+                                <span className="text-[10px] text-orange-500 animate-pulse">
+                                    Generando poster...
+                                </span>
+                            )}
                         </div>
                     ) : (
                         <>
