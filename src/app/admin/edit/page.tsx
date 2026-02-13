@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, Loader2, Check, Smartphone, Monitor, X, Image as ImageIcon, Plus } from "lucide-react";
 import { motion, Reorder } from "framer-motion";
-import ImageUpload from "@/components/admin/ImageUpload";
+import MediaUpload from "@/components/admin/MediaUpload";
 import MultiImageUpload from "@/components/admin/MultiImageUpload";
 
 interface Project {
@@ -190,7 +190,6 @@ function EditContent() {
                                             name="title"
                                             value={formData.title}
                                             onChange={handleChange}
-                                            required
                                             className="h-12 text-lg bg-zinc-900/50 border-zinc-800 focus:border-orange-500/50 transition-colors"
                                         />
                                     </div>
@@ -244,11 +243,24 @@ function EditContent() {
                                     </div>
 
                                     <div className="space-y-2">
-                                        <Label className="text-zinc-300">Imagen Principal (Soporta GIF)</Label>
-                                        <ImageUpload
+                                        <Label className="text-zinc-300">Imagen/Video Principal (Soporta MP4/GIF)</Label>
+                                        <MediaUpload
                                             value={formData.thumbnail}
                                             onChange={(url) => setFormData(prev => ({ ...prev, thumbnail: url }))}
                                             folder="thumbnails"
+                                            label="Subir Thumbnail (MP4, GIF, JPG)"
+                                        />
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <Label htmlFor="description" className="text-zinc-300">Descripción</Label>
+                                        <Textarea
+                                            id="description"
+                                            name="description"
+                                            value={formData.description}
+                                            onChange={handleChange}
+                                            rows={4}
+                                            className="resize-none bg-zinc-900/50 border-zinc-800 focus:border-orange-500/50"
                                         />
                                     </div>
 
@@ -300,18 +312,6 @@ function EditContent() {
                                                 </p>
                                             )}
                                         </div>
-                                    </div>
-
-                                    <div className="space-y-2">
-                                        <Label htmlFor="description" className="text-zinc-300">Descripción</Label>
-                                        <Textarea
-                                            id="description"
-                                            name="description"
-                                            value={formData.description}
-                                            onChange={handleChange}
-                                            rows={4}
-                                            className="resize-none bg-zinc-900/50 border-zinc-800 focus:border-orange-500/50"
-                                        />
                                     </div>
 
                                     <div className="space-y-2">
@@ -439,11 +439,23 @@ function EditContent() {
                                     <div className="p-6 space-y-6">
                                         <div className="aspect-video bg-zinc-900 rounded-lg overflow-hidden relative group">
                                             {formData.thumbnail ? (
-                                                <img
-                                                    src={formData.thumbnail}
-                                                    alt="Preview"
-                                                    className="w-full h-full object-cover"
-                                                />
+                                                formData.thumbnail.includes(".mp4") || formData.thumbnail.includes(".webm") ? (
+                                                    <video
+                                                        src={formData.thumbnail}
+                                                        className="w-full h-full object-cover"
+                                                        muted
+                                                        loop
+                                                        playsInline
+                                                        // Auto-play in preview
+                                                        autoPlay
+                                                    />
+                                                ) : (
+                                                    <img
+                                                        src={formData.thumbnail}
+                                                        alt="Preview"
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                )
                                             ) : (
                                                 <div className="w-full h-full flex flex-col items-center justify-center text-zinc-700 gap-2">
                                                     <div className="h-10 w-10 border-2 border-dashed border-zinc-800 rounded flex items-center justify-center">

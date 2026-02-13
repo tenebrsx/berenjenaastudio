@@ -1,1 +1,63 @@
-[]
+[
+  {
+    "id": "Gp3XsWzanNSEeKJelEHG",
+    "title": "",
+    "slug": "COMERCIAL",
+    "description": "",
+    "category": "comercial",
+    "thumbnail": "https://firebasestorage.googleapis.com/v0/b/berenjenastudiofinal.firebasestorage.app/o/thumbnails%2F1770942210541-0212(1).gif?alt=media&token=6cd24d17-449f-4410-b735-0315f76e467d",
+    "videoUrl": "https://vimeo.com/1164537507?share=copy&fl=sv&fe=ci",
+    "credits": [],
+    "gallery": [
+      "https://firebasestorage.googleapis.com/v0/b/berenjenastudiofinal.firebasestorage.app/o/gallery%2F1770942251709-Un%20comercial%20que%20tardo%CC%81%20menos%20de%204%20horas%20en%20grabarse-%20%C2%A1Beren%2C%20grabemos%20esto%20ra%CC%81pido!%20%F0%9F%A4%A3.%23comercial%20(4).jpg?alt=media&token=2e89b64f-d9e8-450d-b4fa-2467f8c6a1df",
+      "https://firebasestorage.googleapis.com/v0/b/berenjenastudiofinal.firebasestorage.app/o/gallery%2F1770942251709-Un%20comercial%20que%20tardo%CC%81%20menos%20de%204%20horas%20en%20grabarse-%20%C2%A1Beren%2C%20grabemos%20esto%20ra%CC%81pido!%20%F0%9F%A4%A3.%23comercial%20(3).jpg?alt=media&token=92594147-a89d-4d74-8e01-8dece4e1cf2a",
+      "https://firebasestorage.googleapis.com/v0/b/berenjenastudiofinal.firebasestorage.app/o/gallery%2F1770942251709-Un%20comercial%20que%20tardo%CC%81%20menos%20de%204%20horas%20en%20grabarse-%20%C2%A1Beren%2C%20grabemos%20esto%20ra%CC%81pido!%20%F0%9F%A4%A3.%23comercial%20(1).jpg?alt=media&token=7530d16b-0ba9-4209-ab1e-7040e43248ec",
+      "https://firebasestorage.googleapis.com/v0/b/berenjenastudiofinal.firebasestorage.app/o/gallery%2F1770942259156-Un%20comercial%20que%20tardo%CC%81%20menos%20de%204%20horas%20en%20grabarse-%20%C2%A1Beren%2C%20grabemos%20esto%20ra%CC%81pido!%20%F0%9F%A4%A3.%23comercial.jpg?alt=media&token=ebab6406-9287-4ebb-a984-f3bfe6950c0a"
+    ],
+    "createdAt": {
+      "_seconds": 1770942267,
+      "_nanoseconds": 868000000
+    },
+    "updatedAt": {
+      "_seconds": 1770942267,
+      "_nanoseconds": 868000000
+    }
+  },
+  {
+    "id": "wf95gDnXXSqdxocx0AII",
+    "slug": "berenjenaxekibol",
+    "description": "",
+    "category": "Cortometraje",
+    "thumbnail": "https://firebasestorage.googleapis.com/v0/b/berenjenastudiofinal.firebasestorage.app/o/thumbnails%2F1770940956995-0212.gif?alt=media&token=a77daf81-5471-4868-abb3-3258cd692b1e",
+    "videoUrl": "https://vimeo.com/1163682165?fl=ip&fe=ec",
+    "credits": [
+      {
+        "role": "Director",
+        "name": "Jonathan Matos"
+      },
+      {
+        "role": "Director de Fotografia",
+        "name": "Jonathan Matos"
+      },
+      {
+        "role": "Editor",
+        "name": "Jonathan Matos"
+      }
+    ],
+    "createdAt": {
+      "_seconds": 1770941017,
+      "_nanoseconds": 943000000
+    },
+    "title": "EKIBOLRD X BERENJENA",
+    "gallery": [
+      "https://firebasestorage.googleapis.com/v0/b/berenjenastudiofinal.firebasestorage.app/o/gallery%2F1770941552139-Screenshot%202026-02-12%20at%208.12.14%E2%80%AFPM.png?alt=media&token=58fd1595-c636-4e73-897e-ffb7f3c08ef6",
+      "https://firebasestorage.googleapis.com/v0/b/berenjenastudiofinal.firebasestorage.app/o/gallery%2F1770941552141-Screenshot%202026-02-12%20at%208.12.00%E2%80%AFPM.png?alt=media&token=5d782865-205a-4eb7-9776-9d5cb670406d",
+      "https://firebasestorage.googleapis.com/v0/b/berenjenastudiofinal.firebasestorage.app/o/gallery%2F1770941552141-Screenshot%202026-02-12%20at%208.10.33%E2%80%AFPM.png?alt=media&token=60636a79-6de5-4961-ba65-b6825c5f7acb",
+      "https://firebasestorage.googleapis.com/v0/b/berenjenastudiofinal.firebasestorage.app/o/gallery%2F1770941713809-Screenshot%202026-02-12%20at%208.15.09%E2%80%AFPM.png?alt=media&token=4baf6a05-4178-44d1-9674-24df349614bd"
+    ],
+    "updatedAt": {
+      "_seconds": 1770941723,
+      "_nanoseconds": 683000000
+    }
+  }
+]

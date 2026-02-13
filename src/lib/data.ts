@@ -1,7 +1,8 @@
 export interface Project {
     id: string;
-    title: string;
+    title?: string;
     category: string;
+
     year: string;
     thumbnail: string;
     videoUrl?: string | null;

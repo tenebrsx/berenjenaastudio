@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label";
 import { ArrowLeft, Loader2, Check, Smartphone, Monitor, Plus, X, Image as ImageIcon } from "lucide-react";
 import { slugify } from "@/lib/utils";
 import { motion } from "framer-motion";
-import ImageUpload from "@/components/admin/ImageUpload";
+import MediaUpload from "@/components/admin/MediaUpload";
 import MultiImageUpload from "@/components/admin/MultiImageUpload";
 
 export default function NewProjectPage() {
@@ -102,7 +102,7 @@ export default function NewProjectPage() {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
 
-        // Auto-generate slug from title
+        // Auto-generate slug from title IF title is being typed
         if (name === "title") {
             const slug = slugify(value);
             setFormData(prev => ({ ...prev, slug }));
@@ -136,47 +136,11 @@ export default function NewProjectPage() {
                                             name="title"
                                             value={formData.title}
                                             onChange={handleChange}
-                                            required
                                             placeholder="ej. Midnight Echo"
                                             className="h-12 text-lg bg-zinc-900/50 border-zinc-800 focus:border-orange-500/50 transition-colors"
                                         />
                                     </div>
 
-                                    <div className="space-y-2">
-                                        <Label className="text-zinc-300">Imágenes de la Galería</Label>
-
-                                        <MultiImageUpload
-                                            onUpload={addGalleryImages}
-                                            label="Arrastra imágenes aquí o haz click"
-                                            folder="gallery"
-                                        />
-
-                                        {/* Gallery List */}
-                                        <div className="space-y-2 mt-4">
-                                            {formData.gallery?.map((url, idx) => (
-                                                <div key={idx} className="flex items-center gap-2 p-2 bg-zinc-900 rounded border border-zinc-800 group">
-                                                    <div className="h-10 w-16 bg-zinc-800 rounded overflow-hidden shrink-0 relative">
-                                                        <img src={url} alt="" className="h-full w-full object-cover" />
-                                                    </div>
-                                                    <div className="flex-1 min-w-0">
-                                                        <p className="text-xs text-zinc-500 truncate">{url.split('/').pop()?.split('?')[0] || url}</p>
-                                                    </div>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => removeGalleryImage(idx)}
-                                                        className="p-1.5 hover:bg-red-500/10 hover:text-red-400 text-zinc-500 transition-colors rounded"
-                                                    >
-                                                        <X className="h-4 w-4" />
-                                                    </button>
-                                                </div>
-                                            ))}
-                                            {(!formData.gallery || formData.gallery.length === 0) && (
-                                                <p className="text-xs text-zinc-500 italic text-center py-4 border border-zinc-800 border-dashed rounded">
-                                                    Aún no hay imágenes en la galería
-                                                </p>
-                                            )}
-                                        </div>
-                                    </div>
                                     <div className="space-y-2">
                                         <Label htmlFor="slug" className="text-zinc-300">URL Slug</Label>
                                         <div className="relative">
@@ -232,11 +196,12 @@ export default function NewProjectPage() {
                                     </div>
 
                                     <div className="space-y-2">
-                                        <Label className="text-zinc-300">Imagen Principal (Soporta GIF)</Label>
-                                        <ImageUpload
+                                        <Label className="text-zinc-300">Imagen/Video Principal (Soporta MP4/GIF)</Label>
+                                        <MediaUpload
                                             value={formData.thumbnail}
                                             onChange={(url) => setFormData(prev => ({ ...prev, thumbnail: url }))}
                                             folder="thumbnails"
+                                            label="Subir Thumbnail (MP4, GIF, JPG)"
                                         />
                                     </div>
 
@@ -251,6 +216,42 @@ export default function NewProjectPage() {
                                             placeholder="Escribe una breve descripción..."
                                             className="resize-none bg-zinc-900/50 border-zinc-800 focus:border-orange-500/50"
                                         />
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <Label className="text-zinc-300">Imágenes de la Galería</Label>
+
+                                        <MultiImageUpload
+                                            onUpload={addGalleryImages}
+                                            label="Arrastra imágenes aquí o haz click"
+                                            folder="gallery"
+                                        />
+
+                                        {/* Gallery List */}
+                                        <div className="space-y-2 mt-4">
+                                            {formData.gallery?.map((url, idx) => (
+                                                <div key={idx} className="flex items-center gap-2 p-2 bg-zinc-900 rounded border border-zinc-800 group">
+                                                    <div className="h-10 w-16 bg-zinc-800 rounded overflow-hidden shrink-0 relative">
+                                                        <img src={url} alt="" className="h-full w-full object-cover" />
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <p className="text-xs text-zinc-500 truncate">{url.split('/').pop()?.split('?')[0] || url}</p>
+                                                    </div>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => removeGalleryImage(idx)}
+                                                        className="p-1.5 hover:bg-red-500/10 hover:text-red-400 text-zinc-500 transition-colors rounded"
+                                                    >
+                                                        <X className="h-4 w-4" />
+                                                    </button>
+                                                </div>
+                                            ))}
+                                            {(!formData.gallery || formData.gallery.length === 0) && (
+                                                <p className="text-xs text-zinc-500 italic text-center py-4 border border-zinc-800 border-dashed rounded">
+                                                    Aún no hay imágenes en la galería
+                                                </p>
+                                            )}
+                                        </div>
                                     </div>
 
                                     <div className="space-y-2">
@@ -378,17 +379,29 @@ export default function NewProjectPage() {
                                     <div className="p-6 space-y-6">
                                         <div className="aspect-video bg-zinc-900 rounded-lg overflow-hidden relative group">
                                             {formData.thumbnail ? (
-                                                <img
-                                                    src={formData.thumbnail}
-                                                    alt="Preview"
-                                                    className="w-full h-full object-cover"
-                                                />
+                                                formData.thumbnail.includes(".mp4") || formData.thumbnail.includes(".webm") ? (
+                                                    <video
+                                                        src={formData.thumbnail}
+                                                        className="w-full h-full object-cover"
+                                                        muted
+                                                        loop
+                                                        playsInline
+                                                        // Auto-play in preview
+                                                        autoPlay
+                                                    />
+                                                ) : (
+                                                    <img
+                                                        src={formData.thumbnail}
+                                                        alt="Preview"
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                )
                                             ) : (
                                                 <div className="w-full h-full flex flex-col items-center justify-center text-zinc-700 gap-2">
                                                     <div className="h-10 w-10 border-2 border-dashed border-zinc-800 rounded flex items-center justify-center">
                                                         <span className="text-xs">IMG</span>
                                                     </div>
-                                                    <span className="text-xs">Sin imagen</span>
+                                                    <span className="text-xs">Sin imagen/video</span>
                                                 </div>
                                             )}
 
@@ -403,7 +416,7 @@ export default function NewProjectPage() {
                                         <div className="space-y-2">
                                             <div className="flex items-start justify-between">
                                                 <h1 className="text-2xl md:text-4xl font-bold uppercase leading-none">
-                                                    {formData.title || "Proyecto Sin Título"}
+                                                    {formData.title || "Sin Título"}
                                                 </h1>
                                                 <span className="text-xs border border-white/20 px-2 py-1 rounded-full text-zinc-400">
                                                     {formData.category || "Sin Categoría"}

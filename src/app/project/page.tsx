@@ -7,6 +7,7 @@ import { db } from "@/lib/firebase";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import RelatedProjects from "@/components/RelatedProjects";
+import { useCursor } from "@/context/CursorContext";
 
 interface Project {
     id: string;
@@ -29,6 +30,7 @@ function ProjectViewer() {
     const [project, setProject] = useState<Project | null>(null);
     const [loading, setLoading] = useState(true);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const { setCursor } = useCursor();
 
     useEffect(() => {
         if (slug) {
@@ -96,27 +98,54 @@ function ProjectViewer() {
                 {/* YouTube Video (if available) */}
                 {/* Media Section: Video or Thumbnail */}
                 {(() => {
-                    const getYouTubeId = (url: string) => {
-                        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-                        const match = url.match(regExp);
-                        return (match && match[2].length === 11) ? match[2] : null;
+                    const getVideoInfo = (url: string) => {
+                        // YouTube
+                        const ytRegExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+                        const ytMatch = url.match(ytRegExp);
+                        if (ytMatch && ytMatch[2].length === 11) {
+                            return { platform: 'youtube', id: ytMatch[2] };
+                        }
+
+                        // Vimeo
+                        const vimeoRegExp = /vimeo\.com\/(?:channels\/(?:\w+\/)?|groups\/(?:[^\/]*)\/videos\/|album\/(?:\d+)\/video\/|video\/|)(\d+)(?:$|\/|\?)/;
+                        const vimeoMatch = url.match(vimeoRegExp);
+                        if (vimeoMatch && vimeoMatch[1]) {
+                            return { platform: 'vimeo', id: vimeoMatch[1] };
+                        }
+
+                        return null;
                     };
 
-                    const videoId = project.videoUrl ? getYouTubeId(project.videoUrl) : null;
+                    const videoInfo = project.videoUrl ? getVideoInfo(project.videoUrl) : null;
 
-                    if (videoId) {
+                    if (videoInfo) {
                         return (
-                            <div className="mb-20">
-                                <div className="aspect-video bg-zinc-900 rounded-sm overflow-hidden">
-                                    <iframe
-                                        width="100%"
-                                        height="100%"
-                                        src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}`}
-                                        title={project.title}
-                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                        allowFullScreen
-                                        className="w-full h-full"
-                                    />
+                            <div className="mb-20"
+                                onMouseEnter={() => setCursor("hidden")}
+                                onMouseLeave={() => setCursor("default")}
+                            >
+                                <div className="aspect-video bg-zinc-900 rounded-sm overflow-hidden cursor-auto">
+                                    {videoInfo.platform === 'youtube' ? (
+                                        <iframe
+                                            width="100%"
+                                            height="100%"
+                                            src={`https://www.youtube.com/embed/${videoInfo.id}?autoplay=1&mute=1&loop=1&playlist=${videoInfo.id}`}
+                                            title={project.title}
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                            allowFullScreen
+                                            className="w-full h-full"
+                                        />
+                                    ) : (
+                                        <iframe
+                                            src={`https://player.vimeo.com/video/${videoInfo.id}?autoplay=1&loop=1&autopause=0`}
+                                            width="100%"
+                                            height="100%"
+                                            allow="autoplay; fullscreen; picture-in-picture"
+                                            allowFullScreen
+                                            title={project.title}
+                                            className="w-full h-full"
+                                        />
+                                    )}
                                 </div>
                             </div>
                         );
@@ -126,7 +155,7 @@ function ProjectViewer() {
                         <div className="mb-20 aspect-video bg-zinc-900 rounded-sm overflow-hidden">
                             <img
                                 src={project.thumbnail}
-                                alt={project.title}
+                                alt={project.title || "Project thumbnail"}
                                 className="w-full h-full object-cover"
                             />
                         </div>
@@ -134,16 +163,18 @@ function ProjectViewer() {
                 })()}
 
                 {/* Project Description */}
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
-                    <div className="md:col-span-4">
-                        <h2 className="font-mono text-xs uppercase text-gray-500 tracking-widest">Detalles</h2>
+                {project.description && (
+                    <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
+                        <div className="md:col-span-4">
+                            <h2 className="font-mono text-xs uppercase text-gray-500 tracking-widest">Detalles</h2>
+                        </div>
+                        <div className="md:col-span-8 md:col-start-5">
+                            <p className="text-xl md:text-2xl font-light leading-relaxed">
+                                {project.description}
+                            </p>
+                        </div>
                     </div>
-                    <div className="md:col-span-8 md:col-start-5">
-                        <p className="text-xl md:text-2xl font-light leading-relaxed">
-                            {project.description}
-                        </p>
-                    </div>
-                </div>
+                )}
 
                 {/* Credits Section */}
                 {project.credits && project.credits.length > 0 && (

@@ -61,7 +61,7 @@ export default function GalleryPage() {
         <main className="min-h-screen pt-40 pb-20 px-4 md:px-10 bg-black">
             <div className="max-w-[1920px] mx-auto">
                 <h1 className="text-4xl md:text-8xl font-sans font-bold uppercase leading-none mb-20 text-white mix-blend-difference">
-                    Visual<br />Archive
+                    Archivo<br />Visual
                 </h1>
 
                 {loading ? (
