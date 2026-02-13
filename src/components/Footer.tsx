@@ -34,14 +34,6 @@ export default function Footer() {
                     >
                         YouTube
                     </Link>
-                    <Link
-                        href="mailto:hola@berejenastudio.com"
-                        className="hover:text-accent transition-colors"
-                        onMouseEnter={handleMouseEnter}
-                        onMouseLeave={handleMouseLeave}
-                    >
-                        Email
-                    </Link>
                 </div>
 
                 <div className="font-mono text-[10px] uppercase opacity-30 text-right">
