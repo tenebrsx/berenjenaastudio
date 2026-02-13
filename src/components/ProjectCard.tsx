@@ -36,41 +36,24 @@ export default function ProjectCard({ project, layoutId, className }: ProjectCar
                             muted
                             loop
                             playsInline
-                            // Hide controls
-                            controls={false}
-                            // Desktop: Play on hover
-                            onMouseEnter={(e) => e.currentTarget.play()}
-                            onMouseLeave={(e) => {
-                                e.currentTarget.pause();
-                                e.currentTarget.currentTime = 0; // Optional: Reset to start
-                            }}
-                            // Mobile: Intersection Observer handles this via external script or effectively acting as a "gif"
-                            // If we want scroll-based play on mobile, we can use a ref and IntersectionObserver in a useEffect
+                            // Autoplay Logic: Play when visible, Pause when out of view
+                            // Works on both Desktop and Mobile to mimic "GIF" behavior
                             ref={(el) => {
                                 if (!el) return;
-                                // Mobile: Play when element is in the "center" of the viewport
                                 const observer = new IntersectionObserver(
                                     (entries) => {
                                         entries.forEach((entry) => {
-                                            // Check if mobile/touch
-                                            if (window.matchMedia("(hover: none)").matches) {
-                                                if (entry.isIntersecting) {
-                                                    el.play().catch(() => { });
-                                                    el.play().catch(() => { });
-                                                    // el.classList.remove("grayscale", "brightness-75"); // Removed for full color always
-                                                } else {
-                                                    el.pause();
-                                                    el.pause();
-                                                    // el.classList.add("grayscale", "brightness-75"); // Removed for full color always
-                                                }
+                                            if (entry.isIntersecting) {
+                                                el.play().catch(() => {
+                                                    // Auto-play might be blocked (e.g. low power mode)
+                                                });
+                                            } else {
+                                                el.pause();
                                             }
                                         });
                                     },
                                     {
-                                        // "Sweet spot" in the middle of the screen
-                                        // Negative margins shrink the detection area from top/bottom
-                                        rootMargin: "-20% 0px -20% 0px",
-                                        threshold: 0.5
+                                        threshold: 0.5 // Play when 50% visible
                                     }
                                 );
                                 observer.observe(el);
