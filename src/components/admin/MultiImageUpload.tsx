@@ -5,6 +5,7 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { storage } from "@/lib/firebase";
 import { Loader2, Upload, X, Image as ImageIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import imageCompression from "browser-image-compression";
 
 interface MultiImageUploadProps {
     onUpload: (urls: string[]) => void;
@@ -37,20 +38,34 @@ export default function MultiImageUpload({
         setLoading(true);
         setProgress(0);
 
-        const totalBytes = files.reduce((acc, file) => acc + file.size, 0);
-        let totalTransferred = 0;
+        // We can't accurately predict total bytes post-compression beforehand, so we'll just track upload progress
 
         try {
-            const uploadPromises = files.map(file => {
+            const uploadPromises = files.map(async (file) => {
+                let fileToUpload = file;
+
+                // Compress if it's an image (but NOT a GIF)
+                if (file.type.startsWith("image/") && file.type !== "image/gif") {
+                    const options = {
+                        maxSizeMB: 0.8, // Slightly more aggressive for gallery
+                        maxWidthOrHeight: 1920,
+                        useWebWorker: true
+                    };
+                    try {
+                        fileToUpload = await imageCompression(file, options);
+                    } catch (error) {
+                        console.error("Compression failed for " + file.name, error);
+                    }
+                }
+
                 return new Promise<string>((resolve, reject) => {
-                    const storageRef = ref(storage, `${folder}/${Date.now()}-${file.name}`);
-                    const uploadTask = uploadBytesResumable(storageRef, file);
+                    const storageRef = ref(storage, `${folder}/${Date.now()}-${fileToUpload.name}`);
+                    const uploadTask = uploadBytesResumable(storageRef, fileToUpload);
 
                     uploadTask.on(
                         "state_changed",
                         (snapshot) => {
-                            // We could track individual progress here if needed
-                            // For simplicity, we just resolve when done
+                            // Individual progress tracking could go here
                         },
                         (error) => reject(error),
                         async () => {

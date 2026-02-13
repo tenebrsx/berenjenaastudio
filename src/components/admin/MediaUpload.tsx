@@ -6,6 +6,7 @@ import { storage } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import { Loader2, Upload, X, FileVideo } from "lucide-react";
 import { cn } from "@/lib/utils";
+import imageCompression from "browser-image-compression";
 
 interface MediaUploadProps {
     value?: string;
@@ -36,8 +37,8 @@ export default function MediaUpload({
         e.target.value = "";
 
         // Validate file type
-        if (!file.type.startsWith("video/") && file.type !== "image/gif") {
-            alert("Por favor sube un archivo de video válido (MP4) o un GIF.");
+        if (!file.type.startsWith("video/") && !file.type.startsWith("image/")) {
+            alert("Por favor sube un archivo de video válido (MP4) o una imagen (GIF, JPG, PNG).");
             return;
         }
 
@@ -45,9 +46,27 @@ export default function MediaUpload({
             setLoading(true);
             setProgress(0);
 
+            let fileToUpload = file;
+
+            // Compress if it's an image (but NOT a GIF, as compression ruins animation)
+            if (file.type.startsWith("image/") && file.type !== "image/gif") {
+                console.log(`Original size: ${file.size / 1024 / 1024} MB`);
+                const options = {
+                    maxSizeMB: 1,
+                    maxWidthOrHeight: 1920,
+                    useWebWorker: true
+                };
+                try {
+                    fileToUpload = await imageCompression(file, options);
+                    console.log(`Compressed size: ${fileToUpload.size / 1024 / 1024} MB`);
+                } catch (error) {
+                    console.error("Compression failed, uploading original:", error);
+                }
+            }
+
             // Create reference
-            const storageRef = ref(storage, `${folder}/${Date.now()}-${file.name}`);
-            const uploadTask = uploadBytesResumable(storageRef, file);
+            const storageRef = ref(storage, `${folder}/${Date.now()}-${fileToUpload.name}`);
+            const uploadTask = uploadBytesResumable(storageRef, fileToUpload);
 
             uploadTask.on(
                 "state_changed",
@@ -77,20 +96,28 @@ export default function MediaUpload({
                 type="file"
                 ref={fileInputRef}
                 onChange={handleFileChange}
-                accept="video/mp4,image/gif"
+                accept="video/mp4,image/*"
                 className="hidden"
             />
 
             {value ? (
                 <div className="relative aspect-video w-full rounded-lg overflow-hidden bg-zinc-900 border border-zinc-800 group">
-                    <video
-                        src={value}
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                        className="h-full w-full object-cover"
-                    />
+                    {value.includes(".mp4") || value.includes(".webm") ? (
+                        <video
+                            src={value}
+                            autoPlay
+                            loop
+                            muted
+                            playsInline
+                            className="h-full w-full object-cover"
+                        />
+                    ) : (
+                        <img
+                            src={value}
+                            alt="Media preview"
+                            className="h-full w-full object-cover"
+                        />
+                    )}
                     <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity gap-2 bg-black/50">
                         <Button
                             type="button"
@@ -133,7 +160,7 @@ export default function MediaUpload({
                                 {label}
                             </span>
                             <span className="text-xs text-zinc-600">
-                                Click para seleccionar (MP4, GIF)
+                                Click para seleccionar (MP4, GIF, IMG)
                             </span>
                         </>
                     )}

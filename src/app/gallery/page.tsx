@@ -84,6 +84,7 @@ export default function GalleryPage() {
                                         alt={`From ${img.projectTitle}`}
                                         className="w-full h-auto rounded-sm hover:-translate-y-2 transition-transform duration-500 ease-out"
                                         loading="lazy"
+                                        decoding="async"
                                     />
                                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                                         <span className="text-white font-mono text-xs uppercase tracking-widest border border-white px-3 py-1">

@@ -36,6 +36,7 @@ export default function ProjectCard({ project, layoutId, className }: ProjectCar
                             muted
                             loop
                             playsInline
+                            preload="none" // Optimization: Don't load video until needed
                             // Autoplay Logic: Play when visible, Pause when out of view
                             // Works on both Desktop and Mobile to mimic "GIF" behavior
                             ref={(el) => {
@@ -44,6 +45,10 @@ export default function ProjectCard({ project, layoutId, className }: ProjectCar
                                     (entries) => {
                                         entries.forEach((entry) => {
                                             if (entry.isIntersecting) {
+                                                // When visible, set preload to auto if it was none, then play
+                                                if (el.preload === "none") {
+                                                    el.preload = "auto";
+                                                }
                                                 el.play().catch(() => {
                                                     // Auto-play might be blocked (e.g. low power mode)
                                                 });
@@ -64,6 +69,8 @@ export default function ProjectCard({ project, layoutId, className }: ProjectCar
                             src={project.thumbnail}
                             alt={project.title || "Project Thumbnail"}
                             className="w-full h-full object-cover group-hover:scale-105 transition-all duration-1000 ease-out"
+                            loading="lazy" // Optimization: Lazy load images
+                            decoding="async"
                         />
                     )}
 
