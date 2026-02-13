@@ -32,7 +32,7 @@ export default function ProjectCard({ project, layoutId, className }: ProjectCar
                     {project.thumbnail && (project.thumbnail.includes(".mp4") || project.thumbnail.includes(".webm")) ? (
                         <video
                             src={project.thumbnail}
-                            className="w-full h-full object-cover grayscale brightness-75 group-hover:grayscale-0 group-hover:brightness-100 group-hover:scale-105 transition-all duration-1000 ease-out"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-all duration-1000 ease-out"
                             muted
                             loop
                             playsInline
@@ -56,10 +56,12 @@ export default function ProjectCard({ project, layoutId, className }: ProjectCar
                                             if (window.matchMedia("(hover: none)").matches) {
                                                 if (entry.isIntersecting) {
                                                     el.play().catch(() => { });
-                                                    el.classList.remove("grayscale", "brightness-75");
+                                                    el.play().catch(() => { });
+                                                    // el.classList.remove("grayscale", "brightness-75"); // Removed for full color always
                                                 } else {
                                                     el.pause();
-                                                    el.classList.add("grayscale", "brightness-75");
+                                                    el.pause();
+                                                    // el.classList.add("grayscale", "brightness-75"); // Removed for full color always
                                                 }
                                             }
                                         });
@@ -78,7 +80,7 @@ export default function ProjectCard({ project, layoutId, className }: ProjectCar
                         <motion.img
                             src={project.thumbnail}
                             alt={project.title || "Project Thumbnail"}
-                            className="w-full h-full object-cover grayscale brightness-75 group-hover:grayscale-0 group-hover:brightness-100 group-hover:scale-105 transition-all duration-1000 ease-out"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-all duration-1000 ease-out"
                         />
                     )}
 
