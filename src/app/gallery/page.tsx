@@ -82,7 +82,7 @@ export default function GalleryPage() {
                                     <img
                                         src={img.url}
                                         alt={`From ${img.projectTitle}`}
-                                        className="w-full h-auto rounded-sm hover:-translate-y-2 transition-transform duration-500 ease-out grayscale group-hover:grayscale-0"
+                                        className="w-full h-auto rounded-sm hover:-translate-y-2 transition-transform duration-500 ease-out"
                                         loading="lazy"
                                     />
                                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
