@@ -32,6 +32,7 @@ export default function ProjectCard({ project, layoutId, className }: ProjectCar
                     {project.thumbnail && (project.thumbnail.includes(".mp4") || project.thumbnail.includes(".webm")) ? (
                         <video
                             src={project.thumbnail}
+                            poster={project.thumbnailPoster} // Poster image for instant loading
                             className="w-full h-full object-cover group-hover:scale-105 transition-all duration-1000 ease-out"
                             muted
                             loop
@@ -41,14 +42,26 @@ export default function ProjectCard({ project, layoutId, className }: ProjectCar
                             // Works on both Desktop and Mobile to mimic "GIF" behavior
                             ref={(el) => {
                                 if (!el) return;
-                                const observer = new IntersectionObserver(
+
+                                // Lookahead Observer: Preload when 200px away
+                                const preloadObserver = new IntersectionObserver(
+                                    (entries) => {
+                                        entries.forEach((entry) => {
+                                            if (entry.isIntersecting && el.preload === "none") {
+                                                el.preload = "auto"; // Start loading metadata/content
+                                                preloadObserver.unobserve(el); // Only need to trigger once
+                                            }
+                                        });
+                                    },
+                                    { rootMargin: "200px" } // Trigger 200px before visual enter
+                                );
+                                preloadObserver.observe(el);
+
+                                // Playback Observer: Play ONLY when actually visible
+                                const playObserver = new IntersectionObserver(
                                     (entries) => {
                                         entries.forEach((entry) => {
                                             if (entry.isIntersecting) {
-                                                // When visible, set preload to auto if it was none, then play
-                                                if (el.preload === "none") {
-                                                    el.preload = "auto";
-                                                }
                                                 el.play().catch(() => {
                                                     // Auto-play might be blocked (e.g. low power mode)
                                                 });
@@ -61,7 +74,7 @@ export default function ProjectCard({ project, layoutId, className }: ProjectCar
                                         threshold: 0.5 // Play when 50% visible
                                     }
                                 );
-                                observer.observe(el);
+                                playObserver.observe(el);
                             }}
                         />
                     ) : (

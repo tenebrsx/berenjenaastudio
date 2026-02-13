@@ -26,6 +26,7 @@ export default function NewProjectPage() {
         description: "",
         category: "",
         thumbnail: "",
+        thumbnailPoster: "",
         videoUrl: "",
         credits: [] as { role: string; name: string }[],
         gallery: [] as string[],
@@ -195,14 +196,30 @@ export default function NewProjectPage() {
                                         </div>
                                     </div>
 
-                                    <div className="space-y-2">
-                                        <Label className="text-zinc-300">Imagen/Video Principal (Soporta MP4/GIF)</Label>
-                                        <MediaUpload
-                                            value={formData.thumbnail}
-                                            onChange={(url) => setFormData(prev => ({ ...prev, thumbnail: url }))}
-                                            folder="thumbnails"
-                                            label="Subir Thumbnail (MP4, GIF, JPG)"
-                                        />
+                                    <div className="space-y-4">
+                                        <div className="space-y-2">
+                                            <Label className="text-zinc-300">Imagen/Video Principal (Soporta MP4/GIF)</Label>
+                                            <MediaUpload
+                                                value={formData.thumbnail}
+                                                onChange={(url) => setFormData(prev => ({ ...prev, thumbnail: url }))}
+                                                folder="thumbnails"
+                                                label="Subir Thumbnail (MP4, GIF, JPG)"
+                                            />
+                                        </div>
+
+                                        {/* Optional Poster for Videos */}
+                                        {formData.thumbnail && (formData.thumbnail.includes(".mp4") || formData.thumbnail.includes(".webm")) && (
+                                            <div className="space-y-2 pl-4 border-l-2 border-orange-500/20">
+                                                <Label className="text-zinc-300">Imagen de Portada (Poster)</Label>
+                                                <p className="text-xs text-zinc-500 mb-2">Se muestra mientras carga el video. Recomendado para evitar pantalla negra.</p>
+                                                <MediaUpload
+                                                    value={formData.thumbnailPoster}
+                                                    onChange={(url) => setFormData(prev => ({ ...prev, thumbnailPoster: url }))}
+                                                    folder="thumbnails"
+                                                    label="Subir Imagen Estática (JPG/PNG)"
+                                                />
+                                            </div>
+                                        )}
                                     </div>
 
                                     <div className="space-y-2">
