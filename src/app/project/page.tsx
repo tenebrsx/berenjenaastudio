@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState, Suspense } from "react";
-import { notFound, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { motion, AnimatePresence } from "framer-motion";
@@ -47,7 +48,7 @@ function ProjectViewer() {
             const querySnapshot = await getDocs(q);
 
             if (querySnapshot.empty) {
-                notFound();
+                setProject(null);
                 return;
             }
 
@@ -59,6 +60,11 @@ function ProjectViewer() {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        if (project?.title) document.title = `${project.title} · Berenjena Studio`;
+        else if (!loading) document.title = "Proyecto no encontrado · Berenjena Studio";
+    }, [project, loading]);
 
     if (loading) {
         return (
@@ -75,11 +81,18 @@ function ProjectViewer() {
     }
 
     if (!slug || !project) {
-        // If loaded without slug, or project not found (and notFound() didn't trigger yet? notFound throws)
-        // If notFound throws, we don't reach here. 
-        // If no slug, we might want to show "Project not specified" or notFound.
-        if (!slug) return null; // or notFound()
-        return null;
+        return (
+            <main className="min-h-screen pt-40 pb-20 px-4 md:px-10 bg-black text-white">
+                <div className="max-w-[1400px] mx-auto">
+                    <h1 className="text-4xl md:text-7xl font-sans font-bold uppercase mb-6">
+                        Proyecto no encontrado
+                    </h1>
+                    <Link href="/" className="font-mono text-xs uppercase hover:text-accent transition-colors">
+                        ← Volver al inicio
+                    </Link>
+                </div>
+            </main>
+        );
     }
 
     return (
