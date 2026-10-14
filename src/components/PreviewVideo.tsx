@@ -31,6 +31,8 @@ export default function PreviewVideo({ src, poster, priority = false }: PreviewV
         el.defaultMuted = true;
 
         let loaded = priority;
+        let visible = false;
+        const tryPlay = () => { if (visible) el.play().catch(() => { /* autoplay may be blocked (e.g. Low Power Mode) */ }); };
         const startLoad = () => {
             if (loaded) return;
             loaded = true;
@@ -40,7 +42,10 @@ export default function PreviewVideo({ src, poster, priority = false }: PreviewV
                 el.addEventListener("error", done);
                 setTimeout(done, 4000); // never let one slow file block the rest
                 el.preload = "auto";
-                el.load();
+                // A play() call may already have started the fetch; only (re)load if idle.
+                if (el.readyState === 0 && el.networkState !== el.NETWORK_LOADING) el.load();
+                // load() aborts any pending play(), so resume once data is in.
+                el.addEventListener("canplay", tryPlay, { once: true });
             }));
         };
 
@@ -51,9 +56,10 @@ export default function PreviewVideo({ src, poster, priority = false }: PreviewV
         const playObserver = new IntersectionObserver(
             (entries) => {
                 for (const e of entries) {
-                    if (e.isIntersecting) {
+                    visible = e.isIntersecting;
+                    if (visible) {
                         startLoad();
-                        el.play().catch(() => { /* autoplay may be blocked (e.g. Low Power Mode) */ });
+                        tryPlay();
                     } else {
                         el.pause();
                     }
