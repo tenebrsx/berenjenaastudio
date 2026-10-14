@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface PreviewVideoProps {
     src: string;
@@ -22,6 +22,8 @@ function enqueue(load: () => Promise<void>) {
  */
 export default function PreviewVideo({ src, poster, priority = false }: PreviewVideoProps) {
     const ref = useRef<HTMLVideoElement>(null);
+    // Without a poster there is nothing underneath, so show the video right away.
+    const [ready, setReady] = useState(!poster);
 
     useEffect(() => {
         const el = ref.current;
@@ -72,19 +74,37 @@ export default function PreviewVideo({ src, poster, priority = false }: PreviewV
         return () => { nearObserver.disconnect(); playObserver.disconnect(); };
     }, [src, priority]);
 
+    const cls = "absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-all duration-1000 ease-out";
     return (
-        <video
-            ref={ref}
-            // Without a poster, #t=0.1 makes mobile browsers paint a first frame.
-            src={poster ? src : `${src}#t=0.1`}
-            poster={poster}
-            className="w-full h-full object-cover group-hover:scale-105 transition-all duration-1000 ease-out"
-            muted
-            loop
-            playsInline
-            autoPlay={priority}
-            // With a poster nothing needs downloading until the card is near the viewport.
-            preload={priority ? "auto" : poster ? "none" : "metadata"}
-        />
+        <>
+            {poster && (
+                // Still frame underneath: paints instantly; the video fades in over it once it has data.
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                    src={poster}
+                    alt=""
+                    aria-hidden="true"
+                    className={cls}
+                    loading={priority ? "eager" : "lazy"}
+                    decoding="async"
+                    fetchPriority={priority ? "high" : "auto"}
+                />
+            )}
+            <video
+                ref={ref}
+                // Without a poster, #t=0.1 makes mobile browsers paint a first frame.
+                src={poster ? src : `${src}#t=0.1`}
+                poster={poster}
+                className={cls}
+                style={{ opacity: ready ? 1 : 0, transition: "opacity 0.4s ease-in-out, transform 1s ease-out" }}
+                onLoadedData={() => setReady(true)}
+                muted
+                loop
+                playsInline
+                autoPlay={priority}
+                // With a poster nothing needs downloading until the card is near the viewport.
+                preload={priority ? "auto" : poster ? "none" : "metadata"}
+            />
+        </>
     );
 }
