@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "node scripts/fetch-projects.mjs",
+    "prebuild": "node scripts/fetch-projects.mjs && node scripts/mirror-media.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"

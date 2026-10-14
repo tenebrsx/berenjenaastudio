@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { localMedia } from "@/lib/media";
 
 interface PreviewVideoProps {
     src: string;
@@ -20,7 +21,12 @@ function enqueue(load: () => Promise<void>) {
  * The poster shows instantly; the video file is fetched when the card is near the
  * viewport (or immediately for priority cards) and played once it is half visible.
  */
-export default function PreviewVideo({ src, poster, priority = false }: PreviewVideoProps) {
+export default function PreviewVideo({ src: remoteSrc, poster: remotePoster, priority = false }: PreviewVideoProps) {
+    // Prefer same-origin copies; if one fails, fall back to the Storage URL once.
+    const [useRemote, setUseRemote] = useState(false);
+    const [posterFailed, setPosterFailed] = useState(false);
+    const src = useRemote ? remoteSrc : localMedia(remoteSrc) ?? remoteSrc;
+    const poster = posterFailed ? undefined : useRemote ? remotePoster : localMedia(remotePoster);
     const ref = useRef<HTMLVideoElement>(null);
     // Without a poster there is nothing underneath, so show the video right away.
     const [ready, setReady] = useState(!poster);
@@ -88,6 +94,8 @@ export default function PreviewVideo({ src, poster, priority = false }: PreviewV
                     loading={priority ? "eager" : "lazy"}
                     decoding="async"
                     fetchPriority={priority ? "high" : "auto"}
+                    // Never show a broken-image icon: hide the still and let the video show itself.
+                    onError={() => { setPosterFailed(true); setReady(true); }}
                 />
             )}
             <video
@@ -98,6 +106,7 @@ export default function PreviewVideo({ src, poster, priority = false }: PreviewV
                 className={cls}
                 style={{ opacity: ready ? 1 : 0, transition: "opacity 0.4s ease-in-out, transform 1s ease-out" }}
                 onLoadedData={() => setReady(true)}
+                onError={() => { if (!useRemote && src !== remoteSrc) setUseRemote(true); else setReady(true); }}
                 muted
                 loop
                 playsInline
