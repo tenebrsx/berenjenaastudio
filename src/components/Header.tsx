@@ -31,6 +31,7 @@ export default function Header({ categories = [] }: HeaderProps) {
         { href: "/gallery", label: "GALERÍA" },
         { href: "/search", label: "BUSCAR" },
         { href: "/index", label: "ÍNDICE" },
+        { href: "/sobre-mi", label: "SOBRE MÍ" },
     ];
 
     const navLinks = [...categories, ...staticLinks];
