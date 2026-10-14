@@ -33,7 +33,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateSettings = exports.getSettings = exports.deleteProject = exports.updateProject = exports.createProject = exports.getProjects = void 0;
+exports.getSettings = exports.getProjects = void 0;
 const functions = __importStar(require("firebase-functions/v2/https"));
 const admin = __importStar(require("firebase-admin"));
 // Initialize Firebase Admin
@@ -52,84 +52,6 @@ exports.getProjects = functions.onRequest(async (req, res) => {
     catch (error) {
         console.error("Error fetching projects:", error);
         res.status(500).json({ error: "Failed to fetch projects" });
-    }
-});
-// POST /api/projects - Create project
-exports.createProject = functions.onRequest(async (req, res) => {
-    res.set('Access-Control-Allow-Origin', '*');
-    if (req.method !== "POST") {
-        res.status(405).json({ error: "Method not allowed" });
-        return;
-    }
-    try {
-        const { title, slug, description, category, thumbnail } = req.body;
-        const newProject = {
-            title,
-            slug,
-            description,
-            thumbnail,
-            category,
-            createdAt: admin.firestore.FieldValue.serverTimestamp(),
-        };
-        const docRef = await db.collection("projects").add(newProject);
-        res.json(Object.assign({ id: docRef.id }, newProject));
-    }
-    catch (error) {
-        console.error("Error creating project:", error);
-        res.status(500).json({ error: "Failed to create project" });
-    }
-});
-// PUT /api/projects/:slug - Update project
-exports.updateProject = functions.onRequest(async (req, res) => {
-    res.set('Access-Control-Allow-Origin', '*');
-    if (req.method !== "PUT") {
-        res.status(405).json({ error: "Method not allowed" });
-        return;
-    }
-    try {
-        const slug = req.path.split("/").pop();
-        const { title, description, category } = req.body;
-        const snapshot = await db
-            .collection("projects")
-            .where("slug", "==", slug)
-            .limit(1)
-            .get();
-        if (snapshot.empty) {
-            res.status(404).json({ error: "Project not found" });
-            return;
-        }
-        await snapshot.docs[0].ref.update({ title, description, category });
-        res.json({ success: true });
-    }
-    catch (error) {
-        console.error("Error updating project:", error);
-        res.status(500).json({ error: "Failed to update project" });
-    }
-});
-// DELETE /api/projects/:slug - Delete project
-exports.deleteProject = functions.onRequest(async (req, res) => {
-    res.set('Access-Control-Allow-Origin', '*');
-    if (req.method !== "DELETE") {
-        res.status(405).json({ error: "Method not allowed" });
-        return;
-    }
-    try {
-        const slug = req.path.split("/").pop();
-        const snapshot = await db
-            .collection("projects")
-            .where("slug", "==", slug)
-            .limit(1)
-            .get();
-        if (snapshot.empty) {
-            res.status(404).json({ error: "Project not found" });
-            return;
-        }
-        await snapshot.docs[0].ref.delete();
-        res.json({ success: true });
-    }
-    catch (error) {
-        console.error("Error deleting project:", error);
-        res.status(500).json({ error: "Failed to delete project" });
     }
 });
 // GET /api/settings - Get settings
@@ -152,21 +74,8 @@ exports.getSettings = functions.onRequest(async (req, res) => {
         res.status(500).json({ error: "Failed to fetch settings" });
     }
 });
-// POST /api/settings - Update settings
-exports.updateSettings = functions.onRequest(async (req, res) => {
-    res.set('Access-Control-Allow-Origin', '*');
-    if (req.method !== "POST") {
-        res.status(405).json({ error: "Method not allowed" });
-        return;
-    }
-    try {
-        const { heroVideoUrl } = req.body;
-        await db.collection("settings").doc("default").set({ heroVideoUrl }, { merge: true });
-        res.json({ success: true, heroVideoUrl });
-    }
-    catch (error) {
-        console.error("Error updating settings:", error);
-        res.status(500).json({ error: "Failed to update settings" });
-    }
-});
+// Write endpoints (createProject, updateProject, deleteProject, updateSettings,
+// initializeWhitelist) were removed: they had no auth check, bypassed Firestore
+// rules via the Admin SDK, and had no callers. The admin UI writes to Firestore
+// directly and is protected by firestore.rules.
 //# sourceMappingURL=index.js.map
