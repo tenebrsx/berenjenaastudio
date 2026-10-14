@@ -31,13 +31,13 @@ export default function ProjectCard({ project, layoutId, className }: ProjectCar
                     {/* Thumbnail: Video or Image */}
                     {project.thumbnail && (project.thumbnail.includes(".mp4") || project.thumbnail.includes(".webm")) ? (
                         <video
-                            src={project.thumbnail}
+                            src={project.thumbnailPoster ? project.thumbnail : `${project.thumbnail}#t=0.1`} // #t=0.1 makes mobile browsers render a first frame when there is no poster
                             poster={project.thumbnailPoster} // Poster image for instant loading
                             className="w-full h-full object-cover group-hover:scale-105 transition-all duration-1000 ease-out"
                             muted
                             loop
                             playsInline
-                            preload="none" // Optimization: Don't load video until needed
+                            preload="metadata" // Load just enough to show a frame; full load starts near the viewport
                             // Autoplay Logic: Play when visible, Pause when out of view
                             // Works on both Desktop and Mobile to mimic "GIF" behavior
                             ref={(el) => {
@@ -47,7 +47,7 @@ export default function ProjectCard({ project, layoutId, className }: ProjectCar
                                 const preloadObserver = new IntersectionObserver(
                                     (entries) => {
                                         entries.forEach((entry) => {
-                                            if (entry.isIntersecting && el.preload === "none") {
+                                            if (entry.isIntersecting && el.preload !== "auto") {
                                                 el.preload = "auto"; // Start loading metadata/content
                                                 preloadObserver.unobserve(el); // Only need to trigger once
                                             }

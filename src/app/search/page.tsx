@@ -56,6 +56,7 @@ export default function SearchPage() {
 
                     <input
                         type="text"
+                        aria-label="Buscar proyectos"
                         placeholder="Buscar por nombre, categoría, descripción..."
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}

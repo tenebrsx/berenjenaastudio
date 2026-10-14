@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import CategoryClient from "./CategoryClient";
 
 import { collection, getDocs } from "firebase/firestore";
@@ -27,6 +28,12 @@ export async function generateStaticParams() {
         console.error("Error generating static params:", error);
         return [];
     }
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ category: string }> }): Promise<Metadata> {
+    const { category } = await params;
+    const label = decodeURIComponent(category).replace(/-/g, " ");
+    return { title: label.charAt(0).toUpperCase() + label.slice(1) };
 }
 
 export default async function CategoryPage({ params }: { params: Promise<{ category: string }> }) {

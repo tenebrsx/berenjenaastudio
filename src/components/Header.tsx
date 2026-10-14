@@ -72,7 +72,7 @@ export default function Header({ categories = [] }: HeaderProps) {
                         onMouseLeave={handleMouseLeave}
                         onClick={() => setIsMenuOpen(false)}
                     >
-                        berejenastudio
+                        berenjenastudio
                     </Link>
                 </div>
 

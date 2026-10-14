@@ -1,24 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "export", // Re-enabled static export for Firebase Hosting
+  output: "export", // Static export for Firebase Hosting
   images: {
-    unoptimized: true, // May be needed for Firebase hosting
+    unoptimized: true, // Required for static export
   },
-
-  async headers() {
-    return [
-      {
-        source: "/:path*",
-        headers: [
-          {
-            key: "Cross-Origin-Opener-Policy",
-            value: "same-origin-allow-popups",
-          },
-        ],
-      },
-    ];
-  },
+  // Response headers live in firebase.json (hosting.headers);
+  // Next's headers() is ignored with output: "export".
 };
 
 export default nextConfig;
