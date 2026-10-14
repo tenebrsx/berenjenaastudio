@@ -1,5 +1,45 @@
 [
   {
+    "id": "bFSMHRGtLMFZl51Uap8U",
+    "title": "Recap Cosmic Reel",
+    "slug": "recap-cosmic-reel",
+    "description": "",
+    "category": "Reels",
+    "thumbnail": "https://firebasestorage.googleapis.com/v0/b/berenjenastudiofinal.firebasestorage.app/o/thumbnails%2F1778000711407-1000295535.mp4?alt=media&token=1090ea19-48f2-486a-b026-ec0ef8673acd",
+    "thumbnailPoster": "https://firebasestorage.googleapis.com/v0/b/berenjenastudiofinal.firebasestorage.app/o/thumbnails%2Fposter-1778000711831.jpg?alt=media&token=b8cdfcca-08c8-42a7-ba1d-784dfa88fa6b",
+    "videoUrl": "https://www.instagram.com/reel/DW7XHDEjbkR/?igsh=MW96ZWluYjY5cHVldQ==",
+    "credits": [],
+    "gallery": [],
+    "createdAt": {
+      "_seconds": 1778000782,
+      "_nanoseconds": 153000000
+    },
+    "updatedAt": {
+      "_seconds": 1778000782,
+      "_nanoseconds": 153000000
+    }
+  },
+  {
+    "id": "H8avmZJVlDAq7wQcRHlp",
+    "title": "Spec Ad ADIDAS",
+    "slug": "spec-ad-adidas",
+    "description": "",
+    "category": "Commercial",
+    "thumbnail": "https://firebasestorage.googleapis.com/v0/b/berenjenastudiofinal.firebasestorage.app/o/thumbnails%2F1778000211429-1000252583.mp4?alt=media&token=3654e0a9-f6de-4acf-8158-d986bc1a2895",
+    "thumbnailPoster": "https://firebasestorage.googleapis.com/v0/b/berenjenastudiofinal.firebasestorage.app/o/thumbnails%2Fposter-1778000211951.jpg?alt=media&token=01cae97b-d471-4310-ad32-6ce3098b7681",
+    "videoUrl": "https://youtu.be/k8bxcFPvOh8?si=XkYO2plmo0UPbdnT",
+    "credits": [],
+    "gallery": [],
+    "createdAt": {
+      "_seconds": 1778000280,
+      "_nanoseconds": 824000000
+    },
+    "updatedAt": {
+      "_seconds": 1778000280,
+      "_nanoseconds": 824000000
+    }
+  },
+  {
     "id": "EqaD4kJqbI5vGfNFSnJ9",
     "title": "NIKE SB COMERICAL",
     "slug": "nike-sb-comerical",
@@ -51,7 +91,6 @@
     "id": "wf95gDnXXSqdxocx0AII",
     "slug": "berenjenaxekibol",
     "description": "",
-    "category": "Cortometraje",
     "videoUrl": "https://vimeo.com/1163682165?fl=ip&fe=ec",
     "credits": [
       {
@@ -79,9 +118,11 @@
       "https://firebasestorage.googleapis.com/v0/b/berenjenastudiofinal.firebasestorage.app/o/gallery%2F1770941713809-Screenshot%202026-02-12%20at%208.15.09%E2%80%AFPM.png?alt=media&token=4baf6a05-4178-44d1-9674-24df349614bd"
     ],
     "thumbnail": "https://firebasestorage.googleapis.com/v0/b/berenjenastudiofinal.firebasestorage.app/o/thumbnails%2F1770949004613-0212.mp4?alt=media&token=4184b779-ebaf-4071-890e-31ae4be2881f",
+    "category": "Narrative",
+    "thumbnailPoster": "",
     "updatedAt": {
-      "_seconds": 1770949023,
-      "_nanoseconds": 879000000
+      "_seconds": 1778000430,
+      "_nanoseconds": 272000000
     }
   }
 ]

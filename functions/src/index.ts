@@ -50,3 +50,4 @@ export const getSettings = functions.onRequest(async (req, res) => {
 // initializeWhitelist) were removed: they had no auth check, bypassed Firestore
 // rules via the Admin SDK, and had no callers. The admin UI writes to Firestore
 // directly and is protected by firestore.rules.
+export { optimizeProjectPreview } from "./previews";

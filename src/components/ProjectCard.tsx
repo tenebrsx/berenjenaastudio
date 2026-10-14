@@ -5,14 +5,17 @@ import { motion } from "framer-motion";
 import { Project } from "@/lib/data";
 import { cn } from "@/lib/utils";
 import { useCursor } from "@/context/CursorContext";
+import PreviewVideo from "./PreviewVideo";
 
 interface ProjectCardProps {
     project: Project;
     layoutId?: string;
     className?: string;
+    /** Above-the-fold card: start loading immediately. */
+    priority?: boolean;
 }
 
-export default function ProjectCard({ project, layoutId, className }: ProjectCardProps) {
+export default function ProjectCard({ project, layoutId, className, priority = false }: ProjectCardProps) {
     const { setCursor } = useCursor();
 
     return (
@@ -30,53 +33,7 @@ export default function ProjectCard({ project, layoutId, className }: ProjectCar
                 <div className="relative w-full aspect-video overflow-hidden bg-gray-900 video-container">
                     {/* Thumbnail: Video or Image */}
                     {project.thumbnail && (project.thumbnail.includes(".mp4") || project.thumbnail.includes(".webm")) ? (
-                        <video
-                            src={project.thumbnailPoster ? project.thumbnail : `${project.thumbnail}#t=0.1`} // #t=0.1 makes mobile browsers render a first frame when there is no poster
-                            poster={project.thumbnailPoster} // Poster image for instant loading
-                            className="w-full h-full object-cover group-hover:scale-105 transition-all duration-1000 ease-out"
-                            muted
-                            loop
-                            playsInline
-                            preload="metadata" // Load just enough to show a frame; full load starts near the viewport
-                            // Autoplay Logic: Play when visible, Pause when out of view
-                            // Works on both Desktop and Mobile to mimic "GIF" behavior
-                            ref={(el) => {
-                                if (!el) return;
-
-                                // Lookahead Observer: Preload when 200px away
-                                const preloadObserver = new IntersectionObserver(
-                                    (entries) => {
-                                        entries.forEach((entry) => {
-                                            if (entry.isIntersecting && el.preload !== "auto") {
-                                                el.preload = "auto"; // Start loading metadata/content
-                                                preloadObserver.unobserve(el); // Only need to trigger once
-                                            }
-                                        });
-                                    },
-                                    { rootMargin: "200px" } // Trigger 200px before visual enter
-                                );
-                                preloadObserver.observe(el);
-
-                                // Playback Observer: Play ONLY when actually visible
-                                const playObserver = new IntersectionObserver(
-                                    (entries) => {
-                                        entries.forEach((entry) => {
-                                            if (entry.isIntersecting) {
-                                                el.play().catch(() => {
-                                                    // Auto-play might be blocked (e.g. low power mode)
-                                                });
-                                            } else {
-                                                el.pause();
-                                            }
-                                        });
-                                    },
-                                    {
-                                        threshold: 0.5 // Play when 50% visible
-                                    }
-                                );
-                                playObserver.observe(el);
-                            }}
-                        />
+                        <PreviewVideo src={project.thumbnail} poster={project.thumbnailPoster} priority={priority} />
                     ) : (
                         <motion.img
                             src={project.thumbnail}
