@@ -8,6 +8,8 @@ import { db } from "@/lib/firebase";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import RelatedProjects from "@/components/RelatedProjects";
+import PreviewVideo from "@/components/PreviewVideo";
+import buildProjects from "@/data/projects-build.json";
 import { useCursor } from "@/context/CursorContext";
 
 interface Project {
@@ -17,6 +19,7 @@ interface Project {
     category: string;
     year: string;
     thumbnail: string;
+    thumbnailPoster?: string;
     videoUrl?: string | null;
     credits?: { role: string; name: string }[] | null;
     description?: string | null;
@@ -42,13 +45,16 @@ function ProjectViewer() {
     }, [slug]);
 
     const fetchProject = async (slugToFind: string) => {
-        setLoading(true);
+        // Build-time copy first, so the page renders even if Firestore is slow or unreachable.
+        const cached = (buildProjects as unknown as Project[]).find(p => p.slug === slugToFind);
+        if (cached) { setProject(cached); setLoading(false); } else setLoading(true);
         try {
             const q = query(collection(db, "projects"), where("slug", "==", slugToFind));
             const querySnapshot = await getDocs(q);
 
+            if (querySnapshot.metadata.fromCache && cached) return;
             if (querySnapshot.empty) {
-                setProject(null);
+                if (!cached) setProject(null);
                 return;
             }
 
@@ -165,12 +171,18 @@ function ProjectViewer() {
                     }
 
                     return (
-                        <div className="mb-20 aspect-video bg-zinc-900 rounded-sm overflow-hidden">
-                            <img
-                                src={project.thumbnail}
-                                alt={project.title || "Project thumbnail"}
-                                className="w-full h-full object-cover"
-                            />
+                        <div className="relative mb-20 aspect-video bg-zinc-900 rounded-sm overflow-hidden group">
+                            {/\.(mp4|webm)/.test(project.thumbnail) ? (
+                                <PreviewVideo src={project.thumbnail} poster={project.thumbnailPoster} priority />
+                            ) : (
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img
+                                    src={project.thumbnail}
+                                    alt={project.title || "Project thumbnail"}
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => { e.currentTarget.style.visibility = "hidden"; }}
+                                />
+                            )}
                         </div>
                     );
                 })()}

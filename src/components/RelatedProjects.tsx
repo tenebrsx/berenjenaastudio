@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import PreviewVideo from "./PreviewVideo";
+import { localMedia } from "@/lib/media";
+import buildProjects from "@/data/projects-build.json";
 
 interface Project {
     id: string;
@@ -13,7 +15,12 @@ interface Project {
     category: string;
     year: string;
     thumbnail: string;
+    thumbnailPoster?: string;
 }
+
+const isVideo = (u?: string) => !!u && (u.includes(".mp4") || u.includes(".webm"));
+const pick = (all: Project[], currentId: string) =>
+    all.filter(p => p.id !== currentId).sort(() => 0.5 - Math.random()).slice(0, 3);
 
 interface RelatedProjectsProps {
     currentProjectId: string;
@@ -21,8 +28,11 @@ interface RelatedProjectsProps {
 
 export default function RelatedProjects({ currentProjectId }: RelatedProjectsProps) {
     const [projects, setProjects] = useState<Project[]>([]);
+    const [failed, setFailed] = useState<Record<string, boolean>>({});
 
     useEffect(() => {
+        // Build-time list first (works even if Firestore is unreachable), then refresh.
+        Promise.resolve().then(() => setProjects(pick(buildProjects as unknown as Project[], currentProjectId)));
         const fetchProjects = async () => {
             try {
                 const querySnapshot = await getDocs(collection(db, "projects"));
@@ -31,12 +41,7 @@ export default function RelatedProjects({ currentProjectId }: RelatedProjectsPro
                     ...doc.data()
                 })) as Project[];
 
-                // Filter out current project and random shuffle
-                const others = allProjects.filter(p => p.id !== currentProjectId);
-                const shuffled = others.sort(() => 0.5 - Math.random());
-
-                // Take top 3
-                setProjects(shuffled.slice(0, 3));
+                if (!querySnapshot.metadata.fromCache && allProjects.length) setProjects(pick(allProjects, currentProjectId));
             } catch (error) {
                 console.error("Error fetching related projects:", error);
             }
@@ -56,17 +61,22 @@ export default function RelatedProjects({ currentProjectId }: RelatedProjectsPro
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {projects.map((project, index) => (
+                {projects.map((project) => (
                     <Link href={`/project?slug=${project.slug}`} key={project.id} className="block group">
-                        <div className="aspect-video bg-zinc-900 overflow-hidden rounded-sm mb-3">
-                            <motion.img
-                                initial={{ scale: 1.1 }}
-                                whileHover={{ scale: 1 }}
-                                transition={{ duration: 0.6 }}
-                                src={project.thumbnail}
-                                alt={project.title}
-                                className="w-full h-full object-cover"
-                            />
+                        <div className="relative aspect-video bg-zinc-900 overflow-hidden rounded-sm mb-3">
+                            {isVideo(project.thumbnail) ? (
+                                <PreviewVideo src={project.thumbnail} poster={project.thumbnailPoster} />
+                            ) : !failed[project.id] && project.thumbnail ? (
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img
+                                    src={localMedia(project.thumbnail)}
+                                    alt=""
+                                    loading="lazy"
+                                    decoding="async"
+                                    onError={() => setFailed(f => ({ ...f, [project.id]: true }))}
+                                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                                />
+                            ) : null}
                         </div>
                         <div className="flex justify-between items-baseline">
                             <h4 className="font-sans font-bold text-lg uppercase text-white group-hover:text-zinc-400 transition-colors">

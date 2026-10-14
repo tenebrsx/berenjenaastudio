@@ -38,7 +38,8 @@ export default function Home() {
       try {
         const projectsSnap = await getDocs(collection(db, "projects"));
         const projectsData = projectsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Project[];
-        setProjects(sortById(projectsData));
+        // Offline/blocked Firestore resolves with an empty cache snapshot; keep the baked list then.
+        if (!projectsSnap.metadata.fromCache && projectsData.length) setProjects(sortById(projectsData));
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {

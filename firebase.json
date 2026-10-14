@@ -35,6 +35,15 @@
                         "value": "same-origin-allow-popups"
                     }
                 ]
+            },
+            {
+                "source": "/previews/**",
+                "headers": [
+                    {
+                        "key": "Cache-Control",
+                        "value": "public, max-age=31536000, immutable"
+                    }
+                ]
             }
         ]
     },
