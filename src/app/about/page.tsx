@@ -31,7 +31,7 @@ export default function AboutPage() {
                         </div>
                         <div>
                             <h3 className="font-mono text-xs text-gray-500 mb-4 uppercase">Directo</h3>
-                            <a href="mailto:hola@berejenastudio.com" className="font-sans text-xl hover:text-accent transition-colors block">hola@berejenastudio.com</a>
+                            <a href="mailto:hola@berenjenastudio.com" className="font-sans text-xl hover:text-accent transition-colors block">hola@berenjenastudio.com</a>
                         </div>
                         <div className="md:col-span-2 flex gap-8 pt-10">
                             <a href="#" className="uppercase font-mono text-xs tracking-widest hover:text-accent transition-colors">Instagram</a>

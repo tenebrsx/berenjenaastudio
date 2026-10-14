@@ -12,7 +12,7 @@ export default function Footer() {
         <footer className="px-4 md:px-10 py-10 bg-black text-white mix-blend-difference border-t border-white/10 mt-20">
             <div className="flex flex-col md:flex-row justify-between items-end gap-10">
                 <div className="font-mono text-xs uppercase opacity-50">
-                    &copy; {new Date().getFullYear()} berejenastudio
+                    &copy; {new Date().getFullYear()} berenjenastudio
                 </div>
 
                 <div className="flex gap-6 font-mono text-xs uppercase">
