@@ -33,7 +33,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getSettings = exports.getProjects = void 0;
+exports.optimizeProjectPreview = exports.getSettings = exports.getProjects = void 0;
 const functions = __importStar(require("firebase-functions/v2/https"));
 const admin = __importStar(require("firebase-admin"));
 // Initialize Firebase Admin
@@ -78,4 +78,6 @@ exports.getSettings = functions.onRequest(async (req, res) => {
 // initializeWhitelist) were removed: they had no auth check, bypassed Firestore
 // rules via the Admin SDK, and had no callers. The admin UI writes to Firestore
 // directly and is protected by firestore.rules.
+var previews_1 = require("./previews");
+Object.defineProperty(exports, "optimizeProjectPreview", { enumerable: true, get: function () { return previews_1.optimizeProjectPreview; } });
 //# sourceMappingURL=index.js.map
