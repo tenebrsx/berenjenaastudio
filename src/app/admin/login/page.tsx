@@ -33,7 +33,7 @@ export default function AdminLogin() {
                 {/* Logo/Branding */}
                 <div className="text-center mb-8">
                     <h1 className="text-3xl font-semibold text-white mb-2">
-                        BEREJENA STUDIO
+                        BERENJENA STUDIO
                     </h1>
                     <p className="text-sm text-zinc-400">Panel de Administración</p>
                 </div>
@@ -84,7 +84,7 @@ export default function AdminLogin() {
                 {/* Footer */}
                 <div className="text-center mt-6">
                     <p className="text-xs text-zinc-600">
-                        © {new Date().getFullYear()} Berejena Studio. Todos los derechos reservados.
+                        © {new Date().getFullYear()} Berenjena Studio. Todos los derechos reservados.
                     </p>
                 </div>
             </div>

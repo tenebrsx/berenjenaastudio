@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { AuthProvider } from "@/context/AuthContext";
 
 export const metadata: Metadata = {
-    title: "Admin Panel | Berejena Studio",
+    title: "Admin Panel | Berenjena Studio",
     description: "Manage your portfolio",
 };
 

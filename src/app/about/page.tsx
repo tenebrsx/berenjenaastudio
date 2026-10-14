@@ -10,7 +10,7 @@ export default function AboutPage() {
                     </div>
                     <div className="md:col-span-8 md:col-start-5 text-xl md:text-3xl font-light leading-relaxed">
                         <p className="mb-10">
-                            Berejena Studio es el espacio creativo de un director con base en la República Dominicana, enfocado en capturar la esencia vibrante y auténtica del Caribe.
+                            Berenjena Studio es el espacio creativo de un director con base en la República Dominicana, enfocado en capturar la esencia vibrante y auténtica del Caribe.
                         </p>
                         <p>
                             Especializado en narrativas visuales que trascienden fronteras, desde videos musicales hasta comerciales de alto impacto, siempre con una mirada cinematográfica y un estilo inconfundible.

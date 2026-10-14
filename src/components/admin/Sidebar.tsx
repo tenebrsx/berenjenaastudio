@@ -54,7 +54,7 @@ export default function AdminSidebar() {
                 <div className="flex flex-col h-full">
                     {/* Logo/Brand */}
                     <div className="flex items-center h-16 px-6 border-b border-zinc-800">
-                        <h1 className="text-lg font-semibold text-white">Berejena Studio</h1>
+                        <h1 className="text-lg font-semibold text-white">Berenjena Studio</h1>
                     </div>
 
                     {/* Navigation */}
