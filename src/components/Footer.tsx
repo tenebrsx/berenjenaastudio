@@ -11,7 +11,7 @@ export default function Footer() {
     return (
         <footer className="px-4 md:px-10 py-10 bg-black text-white mix-blend-difference border-t border-white/10 mt-20">
             <div className="flex flex-col md:flex-row justify-between items-end gap-10">
-                <div className="font-mono text-xs uppercase opacity-50">
+                <div className="font-mono text-xs uppercase opacity-60">
                     &copy; {new Date().getFullYear()} berenjenastudio
                 </div>
 
@@ -36,7 +36,7 @@ export default function Footer() {
                     </Link>
                 </div>
 
-                <div className="font-mono text-[10px] uppercase opacity-30 text-right">
+                <div className="font-mono text-[10px] uppercase opacity-50 text-right">
                     creado por naavstudio
                 </div>
             </div>
