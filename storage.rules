@@ -1,9 +1,25 @@
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
+    // Same check as firestore.rules isWhitelisted(): whitelist/{email}.active == true
+    function isWhitelisted() {
+      return request.auth != null
+        && request.auth.token.email != null
+        && firestore.exists(/databases/(default)/documents/whitelist/$(request.auth.token.email))
+        && firestore.get(/databases/(default)/documents/whitelist/$(request.auth.token.email)).data.active == true;
+    }
+
+    // Admin uploads: images (compressed client-side to ~1 MB, GIFs uncompressed)
+    // and MP4 videos (uncompressed). Limits leave generous headroom.
+    function isAllowedUpload() {
+      return (request.resource.contentType.matches('image/.*') && request.resource.size < 50 * 1024 * 1024)
+          || (request.resource.contentType.matches('video/.*') && request.resource.size < 1024 * 1024 * 1024);
+    }
+
     match /{allPaths=**} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow create, update: if isWhitelisted() && isAllowedUpload();
+      allow delete: if isWhitelisted();
     }
   }
 }
