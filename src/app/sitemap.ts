@@ -6,7 +6,7 @@ export const dynamic = "force-static";
 const BASE = "https://berenjenastudio.com";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const staticRoutes = ["", "/gallery", "/search", "/index"].map((path) => ({
+  const staticRoutes = ["", "/gallery", "/search", "/index", "/sobre-mi"].map((path) => ({
     url: `${BASE}${path}`,
   }));
   const projectRoutes = (projects as { slug?: string }[])
