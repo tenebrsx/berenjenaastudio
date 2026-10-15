@@ -4,7 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
     title: "Sobre mí",
     description:
-        "Berenjena Studio es el espacio creativo de un director con base en la República Dominicana, enfocado en capturar la esencia vibrante y auténtica del Caribe.",
+        "Jonathan Matos es un cineasta emergente de Santo Domingo, República Dominicana: director, director de fotografía y editor detrás de Berenjena Studio.",
 };
 
 const disciplines = [
@@ -45,10 +45,13 @@ export default function SobreMiPage() {
                 <Section label="Biografía">
                     <div className="text-xl md:text-3xl font-light leading-relaxed">
                         <p className="mb-10">
-                            Berenjena Studio es el espacio creativo de un director con base en la República Dominicana, enfocado en capturar la esencia vibrante y auténtica del Caribe.
+                            Jonathan Matos es un cineasta emergente con base en Santo Domingo, República Dominicana. Detrás de Berenjena Studio, dirige, fotografía y edita sus propias piezas, cuidando cada historia desde la primera idea hasta el último corte.
+                        </p>
+                        <p className="mb-10">
+                            Su trabajo se mueve entre el comercial, como el de Nike SB, la narrativa, como Ekibol RD, y los reels, siempre con una mirada cinematográfica y un ritmo propio.
                         </p>
                         <p>
-                            Especializado en narrativas visuales que trascienden fronteras, desde videos musicales hasta comerciales de alto impacto, siempre con una mirada cinematográfica y un estilo inconfundible.
+                            Desde el Caribe, busca imágenes con luz, textura y movimiento que se sientan auténticas y cercanas: historias hechas aquí, con una identidad visual que no se parece a nadie más.
                         </p>
                     </div>
                 </Section>
