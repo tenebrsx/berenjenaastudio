@@ -8,8 +8,7 @@ import Cursor from "@/components/Cursor";
 import { slugify } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { getProjectsSnapshot } from "@/lib/projects";
 
 export default function SiteShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -19,7 +18,7 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, "projects"));
+        const querySnapshot = await getProjectsSnapshot();
         const projects = querySnapshot.docs.map(doc => doc.data());
 
         // Extract and normalize categories

@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from "react";
 import ProjectCard from "@/components/ProjectCard";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { getProjectsSnapshot } from "@/lib/projects";
 import { slugify } from "@/lib/utils";
 
 interface Project {
@@ -23,7 +22,7 @@ export default function CategoryClient({ category }: { category: string }) {
     useEffect(() => {
         const fetchProjects = async () => {
             try {
-                const querySnapshot = await getDocs(collection(db, "projects"));
+                const querySnapshot = await getProjectsSnapshot();
                 const allProjects = querySnapshot.docs.map(doc => ({
                     id: doc.id,
                     ...doc.data()

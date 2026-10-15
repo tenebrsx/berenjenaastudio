@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { getProjectsSnapshot } from "@/lib/projects";
+import { localMedia } from "@/lib/media";
 
 interface Project {
     id: string;
@@ -28,7 +28,7 @@ export default function GalleryPage() {
 
     const fetchData = async () => {
         try {
-            const querySnapshot = await getDocs(collection(db, "projects"));
+            const querySnapshot = await getProjectsSnapshot();
             const projects = querySnapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
@@ -80,7 +80,9 @@ export default function GalleryPage() {
                             <div key={idx} className="break-inside-avoid group relative mb-6">
                                 <a href={`/project?slug=${img.projectSlug}`} className="block">
                                     <img
-                                        src={img.url}
+                                        src={localMedia(img.url)}
+                                        // Hide the whole tile if the image can't load (no "?" icon).
+                                        onError={(e) => { const t = e.currentTarget.closest(".break-inside-avoid") as HTMLElement | null; if (t) t.style.display = "none"; }}
                                         alt={`From ${img.projectTitle}`}
                                         className="w-full h-auto rounded-sm hover:-translate-y-2 transition-transform duration-500 ease-out"
                                         loading="lazy"

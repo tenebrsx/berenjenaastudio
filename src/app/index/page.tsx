@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { getProjectsSnapshot } from "@/lib/projects";
 import ProjectGrid from "@/components/ProjectGrid";
 
 interface Project {
@@ -21,7 +20,7 @@ export default function IndexPage() {
     useEffect(() => {
         const fetchProjects = async () => {
             try {
-                const querySnapshot = await getDocs(collection(db, "projects"));
+                const querySnapshot = await getProjectsSnapshot();
                 const projectsData = querySnapshot.docs.map(doc => ({
                     id: doc.id,
                     ...doc.data()

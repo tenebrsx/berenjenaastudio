@@ -1,4 +1,5 @@
 "use client";
+import { localMedia } from "@/lib/media";
 
 import { useState } from "react";
 import { motion } from "framer-motion";
@@ -24,7 +25,7 @@ export default function VideoPlayer({ thumbnail, videoUrl }: VideoPlayerProps) {
             {!isPlaying ? (
                 <>
                     <img
-                        src={thumbnail}
+                        src={localMedia(thumbnail)}
                         alt="Video Thumbnail"
                         className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500"
                     />

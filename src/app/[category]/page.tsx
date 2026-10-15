@@ -1,19 +1,18 @@
 import type { Metadata } from "next";
 import CategoryClient from "./CategoryClient";
 
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { getProjectsSnapshot } from "@/lib/projects";
 import { slugify } from "@/lib/utils";
 
 export async function generateStaticParams() {
     try {
-        const querySnapshot = await getDocs(collection(db, "projects"));
+        const querySnapshot = await getProjectsSnapshot();
         const categories = new Set<string>();
 
-        querySnapshot.forEach((doc) => {
+        querySnapshot.docs.forEach((doc) => {
             const data = doc.data();
             if (data.category) {
-                categories.add(slugify(data.category));
+                categories.add(slugify(String(data.category)));
             }
         });
 
