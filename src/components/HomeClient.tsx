@@ -58,7 +58,7 @@ export default function HomeClient() {
             Cine y video desde Santo Domingo, República Dominicana
           </h1>
           <p className="mt-6 text-base md:text-xl font-light leading-relaxed text-zinc-400">
-            Berenjena Studio es el proyecto de Jonathan Matos, director, director de fotografía y editor.
+            Jonathan Matos, director, director de fotografía y editor.
             Comerciales, narrativa y reels con una mirada cinematográfica y una identidad visual caribeña.
           </p>
         </header>
