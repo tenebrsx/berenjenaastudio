@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { useCursor } from "@/context/CursorContext";
 import PreviewVideo from "./PreviewVideo";
 import { localMedia, hideOnError } from "@/lib/media";
+import { projectPath, displayTitle, categoryInfo } from "@/lib/seo";
 
 interface ProjectCardProps {
     project: Project;
@@ -29,7 +30,7 @@ export default function ProjectCard({ project, layoutId, className, priority = f
             onMouseEnter={() => setCursor("text", "VER")}
             onMouseLeave={() => setCursor("default")}
         >
-            <Link href={`/project?slug=${project.slug}`} className="block w-full">
+            <Link href={projectPath(project)} className="block w-full">
                 {/* Aspect Ratio Container */}
                 <div className="relative w-full aspect-video overflow-hidden bg-gray-900 video-container">
                     {/* Thumbnail: Video or Image */}
@@ -38,7 +39,7 @@ export default function ProjectCard({ project, layoutId, className, priority = f
                     ) : (
                         <motion.img
                             src={localMedia(project.thumbnail)}
-                            alt={project.title || "Project Thumbnail"}
+                            alt={`${displayTitle(project)}, Berenjena Studio`}
                             onError={hideOnError}
                             className="w-full h-full object-cover group-hover:scale-105 transition-all duration-1000 ease-out"
                             loading="lazy" // Optimization: Lazy load images
@@ -54,9 +55,9 @@ export default function ProjectCard({ project, layoutId, className, priority = f
                 <div className="mt-4 flex justify-between items-start text-xs font-mono uppercase tracking-widest opacity-70 group-hover:opacity-100 transition-opacity duration-300">
                     <div>
                         <h3 className="text-white group-hover:text-accent transition-colors min-h-[1.2em]">
-                            {project.title || "\u00A0"}
+                            {displayTitle(project)}
                         </h3>
-                        <span className="text-gray-500">{project.category}</span>
+                        <span className="text-gray-500">{categoryInfo(project.category).label}</span>
                     </div>
                     <span className="text-gray-500">{project.year}</span>
                 </div>

@@ -1,15 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { pageMeta, projectPath, SITE, SOCIAL } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
     title: "Sobre mí",
     description:
         "Jonathan Matos es un cineasta emergente de Santo Domingo, República Dominicana: director, director de fotografía y editor detrás de Berenjena Studio.",
-};
+    path: "/sobre-mi",
+    type: "profile",
+});
 
 const disciplines = [
     { label: "Comercial", href: "/comercial" },
-    { label: "Narrativa", href: "/narrative" },
+    { label: "Narrativa", href: "/narrativa" },
     { label: "Reels", href: "/reels" },
 ];
 
@@ -71,7 +74,7 @@ export default function SobreMiPage() {
                         {projects.map((p) => (
                             <li key={p.slug}>
                                 <Link
-                                    href={`/project?slug=${p.slug}`}
+                                    href={projectPath({ slug: p.slug, id: p.slug })}
                                     className="flex justify-between items-baseline gap-6 py-6 hover:text-accent transition-colors"
                                 >
                                     <span className="font-sans text-2xl md:text-4xl font-bold uppercase">{p.title}</span>

@@ -1,41 +1,29 @@
 import type { Metadata } from "next";
 import CategoryClient from "./CategoryClient";
+import { buildProjects, categoryInfo, pageMeta } from "@/lib/seo";
 
-import { getProjectsSnapshot } from "@/lib/projects";
-import { slugify } from "@/lib/utils";
+export const dynamicParams = false;
 
-export async function generateStaticParams() {
-    try {
-        const querySnapshot = await getProjectsSnapshot();
-        const categories = new Set<string>();
+const INTROS: Record<string, string> = {
+    comercial: "Comerciales y spots para marcas, dirigidos, filmados y editados por Berenjena Studio en Santo Domingo, República Dominicana.",
+    narrativa: "Proyectos narrativos de Berenjena Studio: historias filmadas en Santo Domingo, República Dominicana.",
+    reels: "Reels y piezas cortas para redes de Berenjena Studio, desde Santo Domingo, República Dominicana.",
+};
+const intro = (slug: string) =>
+    INTROS[slug] ?? `${categoryInfo(slug).label}: proyectos de Berenjena Studio en Santo Domingo, República Dominicana.`;
 
-        querySnapshot.docs.forEach((doc) => {
-            const data = doc.data();
-            if (data.category) {
-                categories.add(slugify(String(data.category)));
-            }
-        });
-
-        // Always include default categories even if not in DB yet, to be safe
-        const defaultCategories = ["commercial", "music-video", "narrative", "spec"];
-        defaultCategories.forEach(c => categories.add(c));
-
-        return Array.from(categories).map((category) => ({
-            category,
-        }));
-    } catch (error) {
-        console.error("Error generating static params:", error);
-        return [];
-    }
+export function generateStaticParams() {
+    const slugs = new Set(buildProjects().map((p) => categoryInfo(p.category).slug).filter(Boolean));
+    ["comercial", "narrativa", "reels"].forEach((c) => slugs.add(c));
+    return Array.from(slugs).map((category) => ({ category }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ category: string }> }): Promise<Metadata> {
     const { category } = await params;
-    const label = decodeURIComponent(category).replace(/-/g, " ");
-    return { title: label.charAt(0).toUpperCase() + label.slice(1) };
+    return pageMeta({ title: categoryInfo(category).label, description: intro(category), path: `/${category}` });
 }
 
 export default async function CategoryPage({ params }: { params: Promise<{ category: string }> }) {
-    const resolvedParams = await params;
-    return <CategoryClient category={resolvedParams.category} />;
+    const { category } = await params;
+    return <CategoryClient category={category} intro={intro(category)} />;
 }

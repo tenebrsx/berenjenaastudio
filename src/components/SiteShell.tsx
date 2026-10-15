@@ -5,10 +5,9 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { CursorProvider } from "@/context/CursorContext";
 import Cursor from "@/components/Cursor";
-import { slugify } from "@/lib/utils";
+import { categoryInfo } from "@/lib/seo";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { getProjectsSnapshot } from "@/lib/projects";
 
 export default function SiteShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -18,6 +17,8 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
+        await new Promise((r) => setTimeout(r, 2000)); // after first paint; nav links don't need Firebase up front
+        const { getProjectsSnapshot } = await import("@/lib/projects");
         const querySnapshot = await getProjectsSnapshot();
         const projects = querySnapshot.docs.map(doc => doc.data());
 
@@ -30,10 +31,10 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
             const normalized = p.category.trim().toLowerCase();
             if (!normalizedCategories.has(normalized)) {
               normalizedCategories.add(normalized);
-              const slug = slugify(p.category);
+              const slug = categoryInfo(p.category).slug;
               // Store the first occurrence's formatting as the label, but keyed by unique slug/normalized value to avoid dups
               if (!categoryMap.has(slug)) {
-                categoryMap.set(slug, p.category.trim());
+                categoryMap.set(slug, categoryInfo(p.category).label);
               }
             }
           }

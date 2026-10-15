@@ -12,6 +12,11 @@ interface PreviewVideoProps {
 
 // Off-screen previews load one at a time so they don't compete with visible ones.
 let queue: Promise<void> = Promise.resolve();
+// Video downloads wait for the page (and the poster images, the LCP) to finish loading.
+const pageReady = (): Promise<void> =>
+    typeof document === "undefined" || document.readyState === "complete"
+        ? Promise.resolve()
+        : new Promise((r) => window.addEventListener("load", () => r(), { once: true }));
 function enqueue(load: () => Promise<void>) {
     queue = queue.then(load, load);
 }
@@ -38,13 +43,13 @@ export default function PreviewVideo({ src: remoteSrc, poster: remotePoster, pri
         el.muted = true;
         el.defaultMuted = true;
 
-        let loaded = priority;
+        let loaded = false;
         let visible = false;
         const tryPlay = () => { if (visible) el.play().catch(() => { /* autoplay may be blocked (e.g. Low Power Mode) */ }); };
         const startLoad = () => {
             if (loaded) return;
             loaded = true;
-            enqueue(() => new Promise<void>((resolve) => {
+            pageReady().then(() => enqueue(() => new Promise<void>((resolve) => {
                 const done = () => { el.removeEventListener("canplay", done); el.removeEventListener("error", done); resolve(); };
                 el.addEventListener("canplay", done);
                 el.addEventListener("error", done);
@@ -54,7 +59,7 @@ export default function PreviewVideo({ src: remoteSrc, poster: remotePoster, pri
                 if (el.readyState === 0 && el.networkState !== el.NETWORK_LOADING) el.load();
                 // load() aborts any pending play(), so resume once data is in.
                 el.addEventListener("canplay", tryPlay, { once: true });
-            }));
+            })));
         };
 
         const nearObserver = new IntersectionObserver(
@@ -110,9 +115,9 @@ export default function PreviewVideo({ src: remoteSrc, poster: remotePoster, pri
                 muted
                 loop
                 playsInline
-                autoPlay={priority}
+                autoPlay={priority && !poster}
                 // With a poster nothing needs downloading until the card is near the viewport.
-                preload={priority ? "auto" : poster ? "none" : "metadata"}
+                preload={poster ? "none" : priority ? "auto" : "metadata"}
             />
         </>
     );

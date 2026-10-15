@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import ProjectCard from "@/components/ProjectCard";
 import { getProjectsSnapshot } from "@/lib/projects";
-import { slugify } from "@/lib/utils";
+import { categoryInfo } from "@/lib/seo";
 
 interface Project {
     id: string;
@@ -15,7 +15,7 @@ interface Project {
     slug: string;
 }
 
-export default function CategoryClient({ category }: { category: string }) {
+export default function CategoryClient({ category, intro }: { category: string; intro: string }) {
     const [projects, setProjects] = useState<Project[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -29,7 +29,7 @@ export default function CategoryClient({ category }: { category: string }) {
                 })) as Project[];
 
                 // Filter by category slug
-                const filtered = allProjects.filter(p => slugify(p.category) === category);
+                const filtered = allProjects.filter(p => categoryInfo(p.category).slug === category);
                 setProjects(filtered);
             } catch (error) {
                 console.error("Error fetching projects:", error);
@@ -42,10 +42,7 @@ export default function CategoryClient({ category }: { category: string }) {
     }, [category]);
 
     // Format category title from slug (e.g. "music-video" -> "Music Video")
-    const categoryTitle = category
-        .split("-")
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" ");
+    const categoryTitle = categoryInfo(category).label;
 
     return (
         <main className="min-h-screen pt-40 pb-20 px-4 md:px-10 bg-black">
@@ -53,6 +50,9 @@ export default function CategoryClient({ category }: { category: string }) {
                 <h1 className="text-4xl md:text-6xl font-sans font-bold uppercase mb-20 text-white">
                     {categoryTitle}
                 </h1>
+                <p className="-mt-12 mb-16 max-w-2xl text-lg font-light text-zinc-400">
+                    {intro}
+                </p>
 
                 {loading ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
