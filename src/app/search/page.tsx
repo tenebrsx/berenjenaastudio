@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from "react";
 import ProjectCard from "@/components/ProjectCard";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { getProjectsSnapshot } from "@/lib/projects";
 
 interface Project {
     id: string;
@@ -26,7 +25,7 @@ export default function SearchPage() {
 
     const fetchProjects = async () => {
         try {
-            const querySnapshot = await getDocs(collection(db, "projects"));
+            const querySnapshot = await getProjectsSnapshot();
             const projectsData = querySnapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()

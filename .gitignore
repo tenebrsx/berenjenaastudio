@@ -52,3 +52,4 @@ next-env.d.ts
 # firebase deploy cache
 .firebase/
 /public/previews/
+/public/media/

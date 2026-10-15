@@ -10,6 +10,7 @@ import { X } from "lucide-react";
 import RelatedProjects from "@/components/RelatedProjects";
 import PreviewVideo from "@/components/PreviewVideo";
 import buildProjects from "@/data/projects-build.json";
+import { localMedia, hideOnError } from "@/lib/media";
 import { useCursor } from "@/context/CursorContext";
 
 interface Project {
@@ -177,7 +178,7 @@ function ProjectViewer() {
                             ) : (
                                 // eslint-disable-next-line @next/next/no-img-element
                                 <img
-                                    src={project.thumbnail}
+                                    src={localMedia(project.thumbnail)}
                                     alt={project.title || "Project thumbnail"}
                                     className="w-full h-full object-cover"
                                     onError={(e) => { e.currentTarget.style.visibility = "hidden"; }}
@@ -232,8 +233,9 @@ function ProjectViewer() {
                                     onClick={() => setSelectedImage(image)}
                                 >
                                     <img
-                                        src={image}
+                                        src={localMedia(image)}
                                         alt={`${project.title} gallery ${index + 1}`}
+                                        onError={hideOnError}
                                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                                         loading="lazy"
                                     />
@@ -260,7 +262,7 @@ function ProjectViewer() {
                                 <X size={32} />
                             </button>
                             <motion.img
-                                src={selectedImage}
+                                src={localMedia(selectedImage)}
                                 alt="Gallery View"
                                 initial={{ scale: 0.9, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}

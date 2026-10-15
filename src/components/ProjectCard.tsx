@@ -6,6 +6,7 @@ import { Project } from "@/lib/data";
 import { cn } from "@/lib/utils";
 import { useCursor } from "@/context/CursorContext";
 import PreviewVideo from "./PreviewVideo";
+import { localMedia, hideOnError } from "@/lib/media";
 
 interface ProjectCardProps {
     project: Project;
@@ -36,8 +37,9 @@ export default function ProjectCard({ project, layoutId, className, priority = f
                         <PreviewVideo src={project.thumbnail} poster={project.thumbnailPoster} priority={priority} />
                     ) : (
                         <motion.img
-                            src={project.thumbnail}
+                            src={localMedia(project.thumbnail)}
                             alt={project.title || "Project Thumbnail"}
+                            onError={hideOnError}
                             className="w-full h-full object-cover group-hover:scale-105 transition-all duration-1000 ease-out"
                             loading="lazy" // Optimization: Lazy load images
                             decoding="async"
