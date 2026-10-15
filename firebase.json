@@ -73,7 +73,7 @@
             },
             {
                 "source": "/music-video",
-                "destination": "/videos-musicales",
+                "destination": "/work",
                 "type": 301
             }
         ]

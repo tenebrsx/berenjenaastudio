@@ -42,15 +42,6 @@ export default function ProjectDetail({ slug, initialProject = null }: { slug: s
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const { setCursor } = useCursor();
 
-    useEffect(() => {
-        if (slug) {
-            fetchProject(slug);
-        } else {
-            Promise.resolve().then(() => setLoading(false));
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [slug]);
-
     const fetchProject = async (slugToFind: string) => {
         // Build-time copy first, so the page renders even if Firestore is slow or unreachable.
         const cached = cachedInitial;
@@ -72,6 +63,15 @@ export default function ProjectDetail({ slug, initialProject = null }: { slug: s
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        if (slug) {
+            Promise.resolve().then(() => fetchProject(slug));
+        } else {
+            Promise.resolve().then(() => setLoading(false));
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [slug]);
 
     useEffect(() => {
         if (project) document.title = `${displayTitle(project)} · Berenjena Studio`;
