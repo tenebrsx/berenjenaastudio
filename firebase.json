@@ -54,6 +54,28 @@
                     }
                 ]
             }
+        ],
+        "redirects": [
+            {
+                "source": "/about",
+                "destination": "/sobre-mi",
+                "type": 301
+            },
+            {
+                "source": "/commercial",
+                "destination": "/comercial",
+                "type": 301
+            },
+            {
+                "source": "/narrative",
+                "destination": "/narrativa",
+                "type": 301
+            },
+            {
+                "source": "/music-video",
+                "destination": "/videos-musicales",
+                "type": 301
+            }
         ]
     },
     "functions": {

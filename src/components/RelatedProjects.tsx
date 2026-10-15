@@ -5,6 +5,7 @@ import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import Link from "next/link";
 import PreviewVideo from "./PreviewVideo";
+import { projectPath, displayTitle, categoryInfo } from "@/lib/seo";
 import { localMedia } from "@/lib/media";
 import buildProjects from "@/data/projects-build.json";
 
@@ -62,7 +63,7 @@ export default function RelatedProjects({ currentProjectId }: RelatedProjectsPro
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {projects.map((project) => (
-                    <Link href={`/project?slug=${project.slug}`} key={project.id} className="block group">
+                    <Link href={projectPath(project)} key={project.id} className="block group">
                         <div className="relative aspect-video bg-zinc-900 overflow-hidden rounded-sm mb-3">
                             {isVideo(project.thumbnail) ? (
                                 <PreviewVideo src={project.thumbnail} poster={project.thumbnailPoster} />
@@ -80,10 +81,10 @@ export default function RelatedProjects({ currentProjectId }: RelatedProjectsPro
                         </div>
                         <div className="flex justify-between items-baseline">
                             <h4 className="font-sans font-bold text-lg uppercase text-white group-hover:text-zinc-400 transition-colors">
-                                {project.title}
+                                {displayTitle(project)}
                             </h4>
                             <span className="font-mono text-xs text-zinc-600 uppercase">
-                                {project.category}
+                                {categoryInfo(project.category).label}
                             </span>
                         </div>
                     </Link>

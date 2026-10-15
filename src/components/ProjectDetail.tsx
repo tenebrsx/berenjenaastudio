@@ -1,0 +1,279 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import { motion, AnimatePresence } from "framer-motion";
+import { X } from "lucide-react";
+import RelatedProjects from "@/components/RelatedProjects";
+import PreviewVideo from "@/components/PreviewVideo";
+import buildProjects from "@/data/projects-build.json";
+import { localMedia, hideOnError } from "@/lib/media";
+import { useCursor } from "@/context/CursorContext";
+import { categoryInfo, displayTitle, projectDescription } from "@/lib/seo";
+
+interface Project {
+    id: string;
+    title: string;
+    slug: string;
+    category: string;
+    year: string;
+    thumbnail: string;
+    thumbnailPoster?: string;
+    videoUrl?: string | null;
+    credits?: { role: string; name: string }[] | null;
+    description?: string | null;
+    createdAt?: string;
+    updatedAt?: string;
+    gallery?: string[] | null;
+}
+
+export type { Project };
+
+/**
+ * Project page body. Pre-rendered pages pass `initialProject` so the full content is in the
+ * static HTML; Firestore then refreshes it (ignored when offline/blocked).
+ */
+export default function ProjectDetail({ slug, initialProject = null }: { slug: string | null; initialProject?: Project | null }) {
+    const cachedInitial = initialProject ?? (buildProjects as unknown as Project[]).find(p => p.slug === slug) ?? null;
+    const [project, setProject] = useState<Project | null>(cachedInitial);
+    const [loading, setLoading] = useState(!cachedInitial && !!slug);
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const { setCursor } = useCursor();
+
+    useEffect(() => {
+        if (slug) {
+            fetchProject(slug);
+        } else {
+            Promise.resolve().then(() => setLoading(false));
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [slug]);
+
+    const fetchProject = async (slugToFind: string) => {
+        // Build-time copy first, so the page renders even if Firestore is slow or unreachable.
+        const cached = cachedInitial;
+        try {
+            const q = query(collection(db, "projects"), where("slug", "==", slugToFind));
+            const querySnapshot = await getDocs(q);
+
+            if (querySnapshot.metadata.fromCache && cached) return;
+            if (querySnapshot.empty) {
+                if (!cached) setProject(null);
+                return;
+            }
+
+            const found = { id: querySnapshot.docs[0].id, ...querySnapshot.docs[0].data() } as Project;
+            setProject(found);
+        } catch (error) {
+            console.error("Error fetching project:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (project) document.title = `${displayTitle(project)} · Berenjena Studio`;
+        else if (!loading) document.title = "Proyecto no encontrado · Berenjena Studio";
+    }, [project, loading]);
+
+    if (loading) {
+        return (
+            <main className="min-h-screen pt-40 pb-20 px-4 md:px-10 bg-black text-white">
+                <div className="max-w-[1400px] mx-auto">
+                    <div className="mb-20">
+                        <div className="h-16 bg-zinc-800 animate-pulse rounded mb-6" />
+                        <div className="h-4 w-32 bg-zinc-800 animate-pulse rounded" />
+                    </div>
+                    <div className="mb-20 aspect-video bg-zinc-800 animate-pulse rounded" />
+                </div>
+            </main>
+        );
+    }
+
+    if (!slug || !project) {
+        return (
+            <main className="min-h-screen pt-40 pb-20 px-4 md:px-10 bg-black text-white">
+                <div className="max-w-[1400px] mx-auto">
+                    <h1 className="text-4xl md:text-7xl font-sans font-bold uppercase mb-6">
+                        Proyecto no encontrado
+                    </h1>
+                    <Link href="/" className="font-mono text-xs uppercase hover:text-accent transition-colors">
+                        ← Volver al inicio
+                    </Link>
+                </div>
+            </main>
+        );
+    }
+
+    return (
+        <main className="min-h-screen pt-40 pb-20 px-4 md:px-10 bg-black text-white">
+            <div className="max-w-[1400px] mx-auto">
+                {/* Project Header */}
+                <div className="mb-20">
+                    <h1 className="text-4xl md:text-7xl font-sans font-bold uppercase mb-6">
+                        {displayTitle(project)}
+                    </h1>
+                    <div className="flex gap-6 font-mono text-xs uppercase text-gray-500">
+                        <Link href={`/${categoryInfo(project.category).slug}`} className="hover:text-white transition-colors">#{categoryInfo(project.category).label}</Link>
+                        <span>Santo Domingo, República Dominicana</span>
+                    </div>
+                    <p className="mt-8 max-w-3xl text-lg md:text-xl font-light leading-relaxed text-zinc-300">
+                        {projectDescription(project)}
+                    </p>
+                </div>
+
+                {/* YouTube Video (if available) */}
+                {/* Media Section: Video or Thumbnail */}
+                {(() => {
+                    const getVideoInfo = (url: string) => {
+                        // YouTube
+                        const ytRegExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+                        const ytMatch = url.match(ytRegExp);
+                        if (ytMatch && ytMatch[2].length === 11) {
+                            return { platform: 'youtube', id: ytMatch[2] };
+                        }
+
+                        // Vimeo
+                        const vimeoRegExp = /vimeo\.com\/(?:channels\/(?:\w+\/)?|groups\/(?:[^\/]*)\/videos\/|album\/(?:\d+)\/video\/|video\/|)(\d+)(?:$|\/|\?)/;
+                        const vimeoMatch = url.match(vimeoRegExp);
+                        if (vimeoMatch && vimeoMatch[1]) {
+                            return { platform: 'vimeo', id: vimeoMatch[1] };
+                        }
+
+                        return null;
+                    };
+
+                    const videoInfo = project.videoUrl ? getVideoInfo(project.videoUrl) : null;
+
+                    if (videoInfo) {
+                        return (
+                            <div className="mb-20"
+                                onMouseEnter={() => setCursor("hidden")}
+                                onMouseLeave={() => setCursor("default")}
+                            >
+                                <div className="aspect-video bg-zinc-900 rounded-sm overflow-hidden cursor-auto">
+                                    {videoInfo.platform === 'youtube' ? (
+                                        <iframe
+                                            width="100%"
+                                            height="100%"
+                                            src={`https://www.youtube.com/embed/${videoInfo.id}?autoplay=1&mute=1&loop=1&playlist=${videoInfo.id}`}
+                                            title={displayTitle(project)}
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                            allowFullScreen
+                                            className="w-full h-full"
+                                        />
+                                    ) : (
+                                        <iframe
+                                            src={`https://player.vimeo.com/video/${videoInfo.id}?autoplay=1&loop=1&autopause=0`}
+                                            width="100%"
+                                            height="100%"
+                                            allow="autoplay; fullscreen; picture-in-picture"
+                                            allowFullScreen
+                                            title={displayTitle(project)}
+                                            className="w-full h-full"
+                                        />
+                                    )}
+                                </div>
+                            </div>
+                        );
+                    }
+
+                    return (
+                        <div className="relative mb-20 aspect-video bg-zinc-900 rounded-sm overflow-hidden group">
+                            {/\.(mp4|webm)/.test(project.thumbnail) ? (
+                                <PreviewVideo src={project.thumbnail} poster={project.thumbnailPoster} priority />
+                            ) : (
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img
+                                    src={localMedia(project.thumbnail)}
+                                    alt={`${displayTitle(project)}, Berenjena Studio`}
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => { e.currentTarget.style.visibility = "hidden"; }}
+                                />
+                            )}
+                        </div>
+                    );
+                })()}
+
+                {/* Credits Section */}
+                {project.credits && project.credits.length > 0 && (
+                    <div className="md:col-span-8 md:col-start-5 mt-10">
+                        <div className="grid grid-cols-2 gap-y-4 gap-x-10">
+                            {project.credits.map((credit, index) => (
+                                <div key={index} className="flex flex-col">
+                                    <span className="text-xs font-mono uppercase text-zinc-500 tracking-wider mb-1">{credit.role}</span>
+                                    <span className="text-base font-light text-white">{credit.name}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* Gallery Section */}
+                {project.gallery && project.gallery.length > 0 && (
+                    <div className="mt-32 space-y-10">
+                        <div className="flex items-center gap-4">
+                            <span className="h-px flex-1 bg-zinc-900" />
+                            <h3 className="font-mono text-xs uppercase text-zinc-500 tracking-widest">Galería y Momentos</h3>
+                            <span className="h-px flex-1 bg-zinc-900" />
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {project.gallery.map((image, index) => (
+                                <div
+                                    key={index}
+                                    className="group relative aspect-video bg-zinc-900 overflow-hidden rounded-sm hover:-translate-y-2 transition-transform duration-500 ease-out cursor-pointer"
+                                    onClick={() => setSelectedImage(image)}
+                                >
+                                    <img
+                                        src={localMedia(image)}
+                                        alt={`${displayTitle(project)}, fotograma ${index + 1} · Berenjena Studio, Santo Domingo`}
+                                        onError={hideOnError}
+                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                                        loading="lazy"
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* Lightbox Overlay */}
+                <AnimatePresence>
+                    {selectedImage && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setSelectedImage(null)}
+                            className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 backdrop-blur-sm"
+                        >
+                            <button
+                                onClick={() => setSelectedImage(null)}
+                                className="absolute top-6 right-6 text-white/50 hover:text-white transition-colors"
+                            >
+                                <X size={32} />
+                            </button>
+                            <motion.img
+                                src={localMedia(selectedImage)}
+                                alt={`${displayTitle(project)}: imagen ampliada`}
+                                initial={{ scale: 0.9, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                exit={{ scale: 0.9, opacity: 0 }}
+                                transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                                className="max-w-full max-h-[90vh] object-contain rounded-sm shadow-2xl"
+                                onClick={(e) => e.stopPropagation()}
+                            />
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                {/* Related Projects */}
+                <RelatedProjects currentProjectId={project.id} />
+            </div>
+        </main>
+    );
+}
+

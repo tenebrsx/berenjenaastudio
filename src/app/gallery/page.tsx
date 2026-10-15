@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { getProjectsSnapshot } from "@/lib/projects";
 import { localMedia } from "@/lib/media";
+import { projectPath, displayTitle } from "@/lib/seo";
 
 interface Project {
     id: string;
@@ -78,19 +79,19 @@ export default function GalleryPage() {
                     <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
                         {images.map((img, idx) => (
                             <div key={idx} className="break-inside-avoid group relative mb-6">
-                                <a href={`/project?slug=${img.projectSlug}`} className="block">
+                                <a href={projectPath({ slug: img.projectSlug, id: img.projectSlug })} className="block">
                                     <img
                                         src={localMedia(img.url)}
                                         // Hide the whole tile if the image can't load (no "?" icon).
                                         onError={(e) => { const t = e.currentTarget.closest(".break-inside-avoid") as HTMLElement | null; if (t) t.style.display = "none"; }}
-                                        alt={`From ${img.projectTitle}`}
+                                        alt={`${displayTitle({ slug: img.projectSlug, title: img.projectTitle })}: fotograma · Berenjena Studio`}
                                         className="w-full h-auto rounded-sm hover:-translate-y-2 transition-transform duration-500 ease-out"
                                         loading="lazy"
                                         decoding="async"
                                     />
                                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                                         <span className="text-white font-mono text-xs uppercase tracking-widest border border-white px-3 py-1">
-                                            {img.projectTitle}
+                                            {displayTitle({ slug: img.projectSlug, title: img.projectTitle })}
                                         </span>
                                     </div>
                                 </a>
