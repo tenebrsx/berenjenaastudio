@@ -66,7 +66,7 @@ export default function ProjectDetail({ slug, initialProject = null }: { slug: s
 
     useEffect(() => {
         if (slug) {
-            fetchProject(slug);
+            Promise.resolve().then(() => fetchProject(slug));
         } else {
             Promise.resolve().then(() => setLoading(false));
         }
