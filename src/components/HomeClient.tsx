@@ -53,7 +53,7 @@ export default function HomeClient() {
   return (
     <main className="min-h-screen pt-40 pb-20 px-4 md:px-10 bg-black">
       <div className="max-w-[1920px] mx-auto">
-        <header className="mb-16 md:mb-24 max-w-4xl">
+        <header className="mb-16 max-w-4xl md:sr-only">
           <h1 className="font-sans font-bold uppercase tracking-tighter text-3xl md:text-6xl leading-none text-white">
             Cine y video desde Santo Domingo, República Dominicana
           </h1>
