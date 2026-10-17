@@ -17,6 +17,7 @@ import {
     Eye
 } from "lucide-react";
 import { motion } from "framer-motion";
+import AdminThumb from "@/components/admin/AdminThumb";
 
 interface Project {
     id: string;
@@ -24,6 +25,7 @@ interface Project {
     slug: string;
     category: string;
     thumbnail: string;
+    thumbnailPoster?: string;
     createdAt?: string;
 }
 
@@ -188,15 +190,7 @@ export default function AdminDashboard() {
                                         <div className="group flex items-center gap-4 p-3 bg-zinc-900/30 border border-white/5 rounded-xl hover:bg-zinc-900 hover:border-white/10 transition-all">
                                             {/* Thumbnail */}
                                             <div className="h-16 w-24 bg-zinc-800 rounded-lg overflow-hidden relative shrink-0 flex items-center justify-center">
-                                                {project.thumbnail ? (
-                                                    <img
-                                                        src={project.thumbnail}
-                                                        alt={project.title}
-                                                        className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                                    />
-                                                ) : (
-                                                    <Film className="h-6 w-6 text-zinc-600" />
-                                                )}
+                                                <AdminThumb thumbnail={project.thumbnail} thumbnailPoster={project.thumbnailPoster} alt={project.title} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500" />
                                             </div>
 
                                             {/* Info */}

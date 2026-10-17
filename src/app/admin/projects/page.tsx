@@ -22,6 +22,7 @@ import {
     Tag
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import AdminThumb from "@/components/admin/AdminThumb";
 
 interface Project {
     id: string;
@@ -29,6 +30,7 @@ interface Project {
     slug: string;
     category: string;
     thumbnail: string;
+    thumbnailPoster?: string;
     description?: string;
     createdAt?: string;
 }
@@ -207,15 +209,7 @@ export default function ProjectsPage() {
                             <Card key={project.id} className="overflow-hidden group hover:shadow-lg transition-shadow bg-zinc-900/50 border-white/5">
                                 {/* Thumbnail */}
                                 <div className="aspect-video bg-zinc-800/50 overflow-hidden relative flex items-center justify-center">
-                                    {project.thumbnail ? (
-                                        <img
-                                            src={project.thumbnail}
-                                            alt={project.title}
-                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-                                        />
-                                    ) : (
-                                        <Film className="h-8 w-8 text-zinc-600" />
-                                    )}
+                                    <AdminThumb thumbnail={project.thumbnail} thumbnailPoster={project.thumbnailPoster} alt={project.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200" />
                                 </div>
 
                                 {/* Content */}
@@ -272,15 +266,7 @@ export default function ProjectsPage() {
                                     <div className="flex items-center gap-4">
                                         {/* Thumbnail */}
                                         <div className="w-32 h-20 bg-zinc-800 rounded overflow-hidden flex-shrink-0 flex items-center justify-center">
-                                            {project.thumbnail ? (
-                                                <img
-                                                    src={project.thumbnail}
-                                                    alt={project.title}
-                                                    className="w-full h-full object-cover"
-                                                />
-                                            ) : (
-                                                <Film className="h-6 w-6 text-zinc-600" />
-                                            )}
+                                            <AdminThumb thumbnail={project.thumbnail} thumbnailPoster={project.thumbnailPoster} alt={project.title} className="w-full h-full object-cover" />
                                         </div>
 
                                         {/* Info */}
