@@ -62,7 +62,7 @@ export default function SettingsPage() {
         <ProtectedRoute>
             <AdminLayout>
                 <div className="mb-8">
-                    <Link href="/admin" className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-[#FF8562] mb-4">
+                    <Link href="/admin/projects" className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-[#FF8562] mb-4">
                         <ArrowLeft className="h-4 w-4" />
                         Volver al Panel
                     </Link>
@@ -110,7 +110,7 @@ export default function SettingsPage() {
                                             {loading && <Loader2 className="h-4 w-4 animate-spin" />}
                                             {loading ? "Guardando..." : "Guardar Cambios"}
                                         </Button>
-                                        <Link href="/admin">
+                                        <Link href="/admin/projects">
                                             <Button type="button" variant="outline">
                                                 Cancelar
                                             </Button>

@@ -142,7 +142,7 @@ function EditContent() {
                 updatedAt: serverTimestamp(),
             });
 
-            router.push("/admin");
+            router.push("/admin/projects");
         } catch (error) {
             console.error("Error updating project:", error);
             alert("Error updating project");
@@ -175,7 +175,7 @@ function EditContent() {
                         <div className="max-w-md mx-auto space-y-8">
                             {/* Header */}
                             <div>
-                                <Link href="/admin" className="inline-flex items-center gap-2 text-sm text-zinc-500 hover:text-white transition-colors mb-6">
+                                <Link href="/admin/projects" className="inline-flex items-center gap-2 text-sm text-zinc-500 hover:text-white transition-colors mb-6">
                                     <ArrowLeft className="h-4 w-4" />
                                     Volver al Panel
                                 </Link>
@@ -400,7 +400,7 @@ function EditContent() {
                                         {loading && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
                                         {loading ? "Guardando..." : "Guardar Cambios"}
                                     </Button>
-                                    <Link href="/admin">
+                                    <Link href="/admin/projects">
                                         <Button type="button" variant="outline" size="lg" className="border-zinc-800 bg-transparent text-zinc-400 hover:text-white">
                                             Cancelar
                                         </Button>

@@ -71,7 +71,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             }
 
             setIsWhitelisted(true);
-            router.push('/admin');
+            router.push('/admin/projects');
         } catch (err: any) {
             console.error("Sign in error:", err);
             if (err.code === 'auth/popup-closed-by-user') {
