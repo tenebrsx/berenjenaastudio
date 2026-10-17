@@ -237,7 +237,7 @@ export default function NewProjectPage() {
                                     </div>
 
                                     <div className="space-y-2">
-                                        <Label className="text-zinc-300">Imágenes de la Galería</Label>
+                                        <Label className="text-zinc-300">Imágenes de la Galería <span className="text-zinc-500 font-normal">(stills, recomendar subir 4 o más)</span></Label>
 
                                         <MultiImageUpload
                                             onUpload={addGalleryImages}
