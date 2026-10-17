@@ -5,9 +5,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import {
-    LayoutDashboard,
     FolderKanban,
-    Settings,
     LogOut,
     Menu,
     X,
@@ -16,9 +14,7 @@ import {
 import { useState } from "react";
 
 const navigation = [
-    { name: "Panel de Control", href: "/admin", icon: LayoutDashboard },
     { name: "Proyectos", href: "/admin/projects", icon: FolderKanban },
-    { name: "Configuración", href: "/admin/settings", icon: Settings },
 ];
 
 export default function AdminSidebar() {

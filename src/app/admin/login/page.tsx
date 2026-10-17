@@ -13,7 +13,7 @@ export default function AdminLogin() {
     useEffect(() => {
         // If user is authenticated and whitelisted, redirect to admin
         if (user && isWhitelisted) {
-            router.push("/admin");
+            router.push("/admin/projects");
         }
     }, [user, isWhitelisted, router]);
 
